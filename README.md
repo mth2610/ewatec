@@ -5,8 +5,8 @@ This is a web-based platform buit on top ODM (observational data model) for shar
 
 ## Setup database 
 
-## Setup environment
-
+## Setup virtual environment
+`virtualenv env`
 ### Install GDAL in virtualenv
 * GDAL library must have been installed.
 
@@ -18,3 +18,9 @@ export CPLUS_INCLUDE_PATH=/usr/include/gdal
 export C_INCLUDE_PATH=/usr/include/gdal
 pip install GDAL
 ```
+### Install requirements
+`pip install -r requirements.txt`
+
+## Setup gunicorn
+
+## Setup nginx
