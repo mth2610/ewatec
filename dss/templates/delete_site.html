@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col md-12">
+                <form action=confirm_upload method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <input type='hidden' name='csrfmiddlewaretoken' value='ZFCXFy6DUtKKHd0vF3cJCV7LOqGJf6wp' />
+                    <h1>Delete site "" </h1>
+                        <div class="blog blog-container">
+                        <div class="blog-content">
+                            <p> Are you sure to delete site "". By click confirm button, you will delete all the data of site "" including data in datavalues, sites table and seriescatalog table. 
+                            </p>
+                        </div>
+
+                    <p class="text-center">
+                        <input type="submit" name="submit" id="send-form" value="Confirm" class="button primary fa fa-cloud-upload">
+                    </p>
+                    <p class="text-center">
+                        <input type="submit" name="submit" id="send-form" value="Cancel" class="button primary fa fa-cloud-upload">
+                    </p>
+                    </div>
+                    </div>
+                    <input type='hidden' name='user' value={{user.username}} />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

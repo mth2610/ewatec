@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %} 
+{% block content %}
+      
+<section class="blog-wrapper">
+    <div class="container">
+        <div class="row">
+            <h1>Comfirm importing</h1>
+            <div class="col md-12">
+                <div class="blog blog-container">
+                    <div class="blog-content">
+                        <p>You had successfullly uploaded the data. If you want to import your data to database, click the button below</p>
+                        <p class="text-center"><a href="/database/save_datavalues"><span id="send-form" class="button primary large"><i class="fa fa-cloud-upload"></i> Import datavalues</span></a>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

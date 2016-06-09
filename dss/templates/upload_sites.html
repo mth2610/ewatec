@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<section class="blog-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col md-12">
+               <h1>Import Sites</h1>
+                <form action=confirm_upload method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <input type='hidden' name='csrfmiddlewaretoken' value='ZFCXFy6DUtKKHd0vF3cJCV7LOqGJf6wp' />
+                    <div class="blog blog-container">
+                        <div class="blog-content">
+                            <p>Choose your sites file to upload. Notice that your file-name have to be <code>sites.csv</code> and review <a href="/database/download_sample/sites.csv/">sample file</a> to know how to prepare your data.</p>
+
+                            <p>Your data must not exist our system otherwise it will raise an error. To ensure that you will not insert duplicated data, please look at this file carefully <a href="/database/download_sample/available_sites.csv/">available_sites.csv</a>
+                            </p>
+                            <div class="file-container">
+                                <p class="text-center">
+                                    <input id="upload_file" name="upload_file" type="file" />
+                                </p>
+                            </div>
+                            <p class="text-center">
+                                <input type="submit" id="send-form" name="submit" value="Upload file" class="button primary fa fa-cloud-upload">
+                            </p>
+                        </div>
+                        <input type='hidden' name='user' value={{user.username}} />
+                    </div>
+                </form>
+
+            </div>
+        </div>
+</section>
+
+{% endblock %}

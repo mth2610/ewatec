@@ -1,0 +1,97 @@
+<div class="row">
+    <p>Test</p>
+    
+    {% if timeseries_img %}
+    <div class="col md-12"> 
+    <img src="data:image/png;base64, {{timeseries_img}} " />
+
+    </div>
+    {% endif %}
+    
+    {% if scatter_img %}
+    <div class="col md-12"> 
+        <img src="data:image/png;base64, {{scatter_img}} " />
+    </div>
+    {% endif %}
+    
+    {% if residual_img %}
+    <div class="col md-12"> 
+        <img src="data:image/png;base64, {{residual_img}} " />
+    </div>
+    {% endif %}
+</div>
+  
+<div class="row"> 
+    <div class="col md-12">
+        <div>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <td><b>Parameters</b>
+                        </td>
+                        <td><b>Simulation</b></td>
+                        <td><b>Observation</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Standard deviation</td>
+                        <td>{{std_sm}}</td>
+                        <td>{{std_ob}}</td>
+                    </tr>
+                    <tr>
+                        <td>Coefficient of variation (%) </td>
+                        <td>{{cv_sm}}</td>
+                        <td>{{cv_ob}}</td>
+                    </tr>
+                    <tr>
+                        <td>Mean</td>
+                        <td>{{mean_sm}}</td>
+                        <td>{{mean_ob}}</td>
+                    </tr>
+                    <tr>
+                        <td>Median</td>
+                        <td>{{median_sm}}</td>
+                        <td>{{median_ob}}</td>
+                    </tr>
+                    <tr>
+                        <td>Min</td>
+                        <td>{{min_sm}}</td>
+                        <td>{{min_ob}}</td>
+                    </tr>
+                    <tr>
+                        <td>Max</td>
+                        <td>{{max_sm}}</td>
+                        <td>{{max_ob}}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>pearson_r</td>
+                        <td>{{pearson_r}}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>pearson_p</td>
+                        <td>{{pearson_p}}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>spearman_r</td>
+                        <td>{{spearman_r}}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>spearman_p</td>
+                        <td>{{spearman_p}}</td>
+                    </tr>
+                                        
+                    <tr>
+                        <td>nash</td>
+                        <td>{{nash}}</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

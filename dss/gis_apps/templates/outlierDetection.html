@@ -1,0 +1,35 @@
+<div class="row analysisResult">
+    <div class="analysisTitle" >
+        <div style = "text-align: center;">
+            Analyis 1
+        </div>
+        <span class = "removeAnalysis" style ="right: 10px; top: 10px"><i class="fa fa-times"></i></span>
+    <div class="analysisResultContent">
+        <div class="col md-8"> <img src="data:image/png;base64, {{detectedOutlierPlot}} " /></div>
+        <div class="col md-4">
+            <div style="height: 430px; overflow-x: auto; overflow-y: auto;">
+                <table class="striped ouliersTable">
+                    <thead>
+                        <tr>
+                            <th><b>Datetime</b></th>
+                            <th><b>Outlier value</b></th>
+                            <th><b>Edited value</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in outliers %}
+                        <tr>
+                            <td class="datetime">{{data.0}}</td>
+                            <td class="outlierValue">{{data.1}}</td>
+                            <td>
+                                <input style="width: 45px;" type="text" class="editedValue" value="None">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div><span class="button primary" title="Download Selected Data" id="editOutliers">Save editted outlies</span></div>
+        </div>
+    </div>
+</div>

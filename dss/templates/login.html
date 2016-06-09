@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<section class="form-wrapper signin-wrapper">
+    {% if form.errors %}
+    <p class="error">Sorry, that's not a valid username or password</p>
+    {% endif %}
+    <div class="container">
+        <form action="auth_view" method="post">{% csrf_token %}
+            <div class="row">
+                <div class="col md-6 centered">
+                    <h1>Join VnMeteor</h1>
+                    <dl class="form">
+                        <dt class="field-label"><label for="userName">Username or Email</label></dt>
+                        <dd>
+                            <input id="userName" type="text" name="username">
+                        </dd>
+                    </dl>
+                    <dl class="form">
+                        <dt class="field-label">Password</dt>
+                        <dd>
+                            <input id="userEmail" type="password" name="password">
+                        </dd>
+                    </dl>
+                    <div class="form-actions">
+                        <button type="submit" class="button rounded">Sign In</button>
+                    </div>
+                </div>
+        </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

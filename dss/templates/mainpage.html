@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero-wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col md-12">
+          <h1>Environmental data sharing community</h1>
+          <p>"Sharing for developing"</p>
+          <a class="button large rounded primary" href="/gis/basemap">Start now.</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section>
+    <div class="feature-wrapper">
+      <div class="container">
+        <div class="row intro">
+          <div class="col md-12">
+            <p>"Data! Data! Data! I can’t make bricks without clay!" Arthur Conan Doyle </p>
+          </div>
+        </div>
+<!--
+        <div class="row sub-intro">
+          <div class="col md-6">
+            <h3>Lorem ipsum dolor sit amet.</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, porro error earum sunt nisi molestiae quos corporis ad dignissimos!</p>
+          </div>
+          <div class="col md-6">
+            <h3>Lorem ipsum dolor sit amet.</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, porro error earum sunt nisi molestiae quos corporis ad dignissimos! <a class="button large primary rounded block" href="/gis/basemap"><i class="fa fa-globe"></i> Explore Map</a>
+            </p>
+          </div>
+        </div>
+-->
+        <div class="row main-feature">
+         {% for element in page %}
+          <div class="col sm-6 md-3">
+            <div class="feature-box">
+              <div class="feature-thumb">
+                <img src="{{element.picture.url}}" alt="bear">
+              </div>
+              <div class="feature-content">
+                  <a href="/documents/{{element.id}}"><h4>{{element.title}}</h4></a>
+<!--                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos, possimus.</p>-->
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="logo-wrapper">
+    <div class="container">
+      <div class="row logos">
+        <h3 class="heading">The website is powered by </h3>
+        <div class="col md-3 xs-6">
+          <div class="ltm"><a href ="https://www.djangoproject.com/"><img src="assets/images/logo-django.png" alt=""></a></div>
+        </div>
+        <div class="col md-3 xs-6">
+            <div class="ltm"><a href ="http://www.postgresql.org/"><img src="assets/images/logo-postgresql.png" alt=""></a></div>
+        </div>
+        <div class="col md-3 xs-6">
+            <div class="ltm"><a href ="http://openlayers.org/"><img src="assets/images/logo-openlayers.png" alt=""></a><div class="lop">Openlayers</div></div>
+        </div>
+        <div class="col md-3 xs-6">
+            <div class="ltm"><a href ="https://www.cuahsi.org/"><img src="assets/images/logo-cuahsi.png" alt=""></a></div></div>
+      </div>
+    </div>
+  </section>
+    
+ 
+{% endblock %}

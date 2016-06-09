@@ -1,0 +1,401 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>VnMeteor Map</title>
+
+    <!--	<link rel="stylesheet" type="text/css" href="http://openlayers.org/en/v3.0.0/css/ol.css">-->
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/ol.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/base.min.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/main.min.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/spinner.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/modal.css" %}' />
+    <!--	<script src="http://openlayers.org/en/v3.0.0/build/ol.js" type="text/javascript"></script>-->
+    <script src='{% static "/assets/js/ol.js" %}' type=" text/javascript"></script>
+    <script src='{% static "/assets/js/jquery-1.11.2.min.js" %}' type=" text/javascript"></script>
+    <script src='{% static "/assets/js/scripts.min.js" %}' type="text/javascript"></script>
+    <script src='{% static "/assets/js/spinner.js" %}' type="text/javascript"></script>
+    
+</head>
+
+<body id="map1">
+    <div class="map-wrapper">
+        <div class="map-header anim-h" id="mapHead">
+            <div class="top">
+                <h1 class="site-logo"><a href="/"></a></h1> {% if not user.is_authenticated %}
+                <div class="user fr _hpop" data-target="popAcc">
+                    <a href="/auth/login" class="button "><span class="lbl">Sign in</span></a>
+                </div>
+                {% else %}
+                <div class="popup-account anim-o" id="popAcc">
+                    <div class="caret dark"></div>
+                    <div class="caret"></div>
+                    <div class="big-avatar">
+                        {% if user.profile.picture %}
+                        <img src="{{user.profile.picture.url}}"> {% else %}
+                        <img src="/media/user_avatar/guest_avatar.jpg"> {% endif %}
+                    </div>
+                    <div class="userinfo">
+                        <div class="name" id="username" username={{user.username}}>{{user.username}}</div>
+                        <div class="acc"><a href="/auth/profile">My Account</a>
+                        </div>
+                        <a class="button signout" href="/auth/logout">>Sign Out</a>
+                    </div>
+                </div>
+                <div class="user fr _hpop" data-target="popAcc">
+                    <a href="#">
+                        <span class="name">{{user.username}}</span>
+                        <span class="avatar">
+				    {% if user.profile.picture %}
+                      <img  class="circle" src="{{user.profile.picture.url}}">
+                    {% else %}
+                       <img class="circle" src="/media/user_avatar/guest_avatar.jpg">
+                    {% endif %}
+                    </span>
+                    </a>
+                </div>
+                {% endif %}
+                <div title="Hide Sidebar" class="info fr _hpop" data-target="popInfo">
+                    <i class="fa fa-list-ul"></i>
+                </div>
+            </div>
+            <ul class="tab-head _htab">
+                <li class="_tab _tab-1 selected"><a href="#1">Map</a>
+                </li>
+                <li class="_tab _tab-2"><a href="#2">Layer</a>
+                </li>
+                <li class="_tab _tab-3"><a href="#3">Database</a>
+                </li>
+                <li class="_tab no-mobile"><a class="toggle hide_toolbox" title="Hide Toolbox" href="#"><i class="fa fa-angle-up"></i></a><a class="toggle stick_toolbox" title="Stick Toolbox" href="#"><i class="fa fa-paperclip"></i></a>
+                </li>
+            </ul>
+            <div class="tab-content toolbox _tab-1 anim-t show">
+               <a href="/gis/basemap">
+                    <div class="row tool-group">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-refresh"></i>
+                            <div class="label">Refresh</div>
+                        </div>
+                    </div>
+                </a>
+                
+                <div class="col xs-4 tool-group">
+                    <a id="export-png" download="map.png">
+                        <div class="tool btn">
+                            <i class="fa fa-picture-o"></i>
+                            <div class="label">Export to PNG</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="row tool-group">
+                    <div class="col xs-4  tool btn" id="track">
+                        <span class="eye" ><i class="fa fa-map-marker"></i></span>
+                        <div class="label">Track position</div>
+                    </div>
+                </div>
+
+<!--
+                <div class="row tool-group no-br">
+                    <div class="col xs-4 tool">
+                        <i class="fa fa-star"></i>
+                        <div class="label">Bookmarks</div>
+                    </div>
+                </div>
+-->
+            </div>
+            <div class="tab-content toolbox _tab-2 anim-t">
+                <div class="row tool-group">
+                    <a href="/gis/uploadmap">
+                        <div class="tool">
+                            <i class="fa fa-plus"></i>
+                            <div class="label">Add Layer</div>
+                        </div>
+                    </a>
+<!--
+                    <div class="col xs-4 tool">
+                        <i class="fa fa-edit"></i>
+                        <div class="label">Edit Layer</div>
+                    </div>
+-->
+                </div>
+                <div class="row tool-group">
+                    <div id="zoom2layer" class="col xs-4 tool">
+                        <i class="fa fa-compress"></i>
+                        <div class="label">Zoom to Layer</div>
+                    </div>
+<!--
+                    <div class="col xs-4 tool">
+                        <i class="fa fa-font"></i>
+                        <div class="label">Show Labels</div>
+                    </div>
+-->
+                </div>
+            </div>
+            <div class="tab-content toolbox _tab-3 anim-t">
+                <div class="row tool-group">
+                    <a href="/gis/update_geojson">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-refresh"></i>
+                            <div class="label">Update Layers</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="row tool-group">
+                    <a href="/database/upload_methods">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-medium"></i>
+                            <div class="label">Import Methods</div>
+                        </div>
+                    </a>
+                    <a href="/database/upload_sources">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-database"></i>
+                            <div class="label">Import Sources</div>
+                        </div>
+                    </a>
+                    <a href="/database/upload_variables">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-cubes"></i>
+                            <div class="label">Import Variables</div>
+                        </div>
+                    </a>
+                    <a href="/database/upload_sites">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-file-code-o"></i>
+                            <div class="label">Import Sites</div>
+                        </div>
+                    </a>
+                    <a href="/database/upload_datavalues">
+                        <div class="col xs-4 tool">
+                            <i class="fa fa-list-alt"></i>
+                            <div class="label">Import Datavalues</div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="row tool-group">
+                       <a href="#openModal">
+                        <div class="col xs-4 tool" >
+                            <i class="fa fa-file-text-o"></i>
+                            <div class="label">Export to SWAT</div>
+                        </div>
+                      </a>
+                </div>
+                
+                <div class="row tool-group">
+                       <a href="#confirm_delete_sites">
+                        <div class="col xs-4 tool" >
+                            <i class="fa fa-times"></i>
+                            <div class="label">Delete site</div>
+                        </div>
+                      </a>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <div class="main-element" id="map"></div>
+            <div class="float-toolbox">
+                <ul class="toolbar show" id="toolBar">
+                    <li class="_hpop" data-target="layerBox"><i class="fa fa-list-ul" title="Layer List"></i><span>Layer List</span>
+                    </li>
+                    <li id="zoom_in"><i class="fa fa-plus" title="Zoom In"></i>
+                    </li>
+                    <li id="zoom_out"><i class="fa fa-minus" title="Zoom Out"></i>
+                    </li>
+                    <li class="_hpop no-mobile" data-target="toolBar"><i class="fa fa-angle-double-left" title="Show/Hide Toolbar"></i><i class="fa fa-angle-double-right" title="Show/Hide Toolbar"></i>
+                    </li>
+                    <li class="ch no-mobile coordinates" id="mouse-position">
+                        <div class="coordinates"></div>
+                    </li>
+                    <li class="ch" id="info">Selected Objects: 0</li>
+                </ul>
+            </div>
+            <div class="layer-box layer-group anim-h show" id="layerBox">
+                <div class="meta">
+                    <h6 class="name">Layers</h6>
+                    <span class="database _hpop" data-target="allData" id="data-review">
+                            <i class="fa fa-database" title="View All Data" ></i>
+                        </span>
+                </div>
+                <div class="layer-panel">
+
+                    {% if user.is_authenticated %}
+                    <div class="layer-group open" id="usermaps">
+                        <div class="layer">
+                            <div class="layer-mask"></div>
+                            <i class="fa fa-folder folder _lt"></i>
+                            <i class="fa fa-folder-open folder _lt"></i>
+                            <span class="layer-name">User maps</span>
+                        </div>
+
+                        {% for map in user_maps %}
+                        <div class="group">
+                            <div class="layer">
+                                <div class="layer-mask"></div>
+                                <label class="eye">
+                                    <input class="usermap layers-control" id="{{map.0}}" type="checkbox" source_link="{{map.1}}"><i class="fa fa-eye-slash _lt"></i>
+                                </label>
+                                <i class="fa fa-lock _lt"></i>
+                                <span class="layer-name">{{map.0}}</span>
+                            </div>
+                        </div>
+                            {% empty %} 
+                        {% endfor%} {% else %} {% endif %}
+                    </div>
+                    <div class="layer-group open">
+                        <div class="layer">
+                            <div class="layer-mask"></div>
+                            <i class="fa fa-folder folder _lt"></i>
+                            <i class="fa fa-folder-open folder _lt"></i>
+                            <span class="layer-name">Thematic Maps</span>
+                        </div>
+                        <div class="group">
+                            <div class="layer">
+                                <div class="layer-mask"></div>
+                                <label class="eye">
+                                    <input id="Province" source="provinces_source" class="layers-control" type="checkbox"><i class="fa fa-eye-slash _lt"></i>
+                                </label>
+                                <i class="fa fa-lock _lt"></i>
+                                <span class="layer-name">Provinces</span>
+                                <label>
+                                    <input type="checkbox" class="layers-control" id="Province-label"><i class="fa fa-info-circle _lt lb"></i>
+                                </label>
+                            </div>
+
+                            <div class="layer">
+                                <div class="layer-mask"></div>
+                                <label class="eye">
+                                    <input id="Station" type="checkbox" class="layers-control" source="stations_source"><i class="fa fa-eye _lt"></i>
+                                </label>
+                                <i class="fa fa-lock _lt "></i>
+                                <span class="layer-name">Stations</span>
+                                <label>
+                                    <input type="checkbox" id="Station-label" checked><i class="fa fa-info-circle _lt lb"></i>
+                                </label>
+                            </div>
+
+                            <div class="layer">
+                                <div class="layer-mask"></div>
+                                <label class="eye">
+                                    <input id="River" source="river_source" class="layers-control" type="checkbox"><i class="fa fa-eye-slash _lt"></i>
+                                </label>
+                                <i class="fa fa-lock _lt"></i>
+                                <span class="layer-name">River</span>
+                                <label>
+                                    <input type="checkbox"><i class="fa fa-info-circle _lt lb"></i>
+                                </label>
+                            </div>
+
+                            <div class="layer">
+                                <div class="layer-mask"></div>
+                                <label class="eye">
+                                    <input id="Soil" source="soil_source" class="layers-control" type="checkbox"><i class="fa fa-eye-slash _lt"></i>
+                                </label>
+                                <i class="fa fa-lock _lt"></i>
+                                <span class="layer-name">Soil</span>
+                                <label>
+                                    <input type="checkbox"><i class="fa fa-info-circle _lt lb"></i>
+                                </label>
+                            </div>
+
+                            <div class="layer">
+                                <div class="layer-mask"></div>
+                                <label class="eye">
+                                    <input id="Landuse" source="landuse_source" class="layers-control" type="checkbox"><i class="fa fa-eye-slash _lt"></i>
+                                </label>
+                                <i class="fa fa-lock _lt"></i>
+                                <span class="layer-name">Landuse</span>
+                                <label>
+                                    <input type="checkbox" id="Landuse-label"><i class="fa fa-info-circle _lt lb"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layer-group open">
+                        <div class="layer">
+                            <div class="layer-mask"></div>
+                            <i class="fa fa-folder folder _lt"></i>
+                            <i class="fa fa-folder-open folder _lt"></i>
+<!--
+                            <label class="eye">
+                                <input type="checkbox"><i class="fa fa-eye"></i>
+                            </label>
+-->
+<!--                            <i class="fa fa-lock _lt __root"></i>-->
+                            <span class="layer-name">Base maps</span>
+                        </div>
+                        <div class="group">
+                            <div class="layer">
+                                <select id="basemap-select">
+                                    <option value="osm">OSM</option>
+                                    <option value="aerial">Aerial</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup-info anim-r" id="popInfo">
+            <table class="striped">
+                <tbody>
+                    <tr>
+                        <td>station_id</td>
+                        <td>Narco_Inlet</td>
+                    </tr>
+                    <tr>
+                        <td>date</td>
+                        <td>3/4/2014</td>
+                    </tr>
+                    <tr>
+                        <td>photos</td>
+                        <td><a class="limg" href="#"><i class="fa fa-file-image-o"></i> Michael_swale.jpg</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="map-data" id="map-data">
+            <div class="data-content anim-h" id="allData"></div>
+        </div>
+        
+        <div id="spinner" class="spinner" style="display:none;"><img id="img-spinner" src="/media/images/ajax-loader.svg" alt="Loading" /></div>
+        
+        <div id="openModal" class="modalDialog">
+            <div>
+                <a href="#close" title="Close" class="close">X</a>
+                <h2>Choose time range</h2>
+                <p>Please write you time range to export data. It must be in format "yyyy-mm-dd", for example (2001-12-31)</p>
+                <p>If you leave starttime and endtime blank, the system will use default time range</p>
+                <p>Start time: <input id="swat_starttime" type="text" ></p>
+                <p>End time   : <input id="swat_endtime" type="text" ></p>
+                <p><a href="#close"><button id="export2swat" type="submit" class="button rounded primary">OK</button></a></p>
+
+            </div>
+        </div>
+        
+        <div id="confirm_delete_sites" class="modalDialog">
+            <div>
+                <a href="#close" title="Close" class="close">X</a>
+                <h2>Confirm</h2>
+                <p>Click confirm to ensure that you want to delete all of data of those sites ?</p>
+                <p><a href="#close"><button id="delete_sites" type="submit" class="button rounded primary">Confirm</button></a></p>
+
+            </div>
+        </div>
+
+        
+    </div>
+    <script src='{% static "/assets/js/gisbase.js" %}' type="text/javascript"></script>
+</body>
+
+</html>

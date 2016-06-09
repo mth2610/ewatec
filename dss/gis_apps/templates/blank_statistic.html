@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col md-8"> <img src="data:image/png;base64, {{img}} " />
+    </div>
+    <div class="col md-4">
+        <div>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <td><b>Statistical Parameters</b>
+                        </td>
+                        <td><b>Values</b>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>Standard deviation</td>
+                        <td>{{standard_deviation}}</td>
+                    </tr>
+                    <tr>
+                        <td>Coefficient of variation</td>
+                        <td>{{cv}}</td>
+                    </tr>
+                    <tr>
+                        <td>Mean</td>
+                        <td>{{mean}}</td>
+                    </tr>
+                    <tr>
+                        <td>Min</td>
+                        <td>{{min}}</td>
+                    </tr>
+                    <tr>
+                        <td>Max</td>
+                        <td>{{max}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <span class="button primary" title="Download Selected Data" id="extract_data" timestep={{timestep}} variable="{{variable}}" starttime= "{{starttime}}" endtime="{{endtime}}">Extract Data</span>
+        </div>
+    </div>
+</div>

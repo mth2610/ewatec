@@ -1,0 +1,52 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+<body>
+<section class="blog-wrapper">
+    <div class="container">
+     
+      <div class="row">
+        <div class="col md-12">
+         
+          <h1>Post Writing</h1>
+          <div class="blog">
+           <form action=create method="post" enctype="multipart/form-data">{% csrf_token %}
+
+            <dl class="form">
+              <dt class="field-label"><label for="userName">Title</label></dt>
+              <dd><input id="id_title" name="title" type="text"></dd>
+            </dl>
+            <dl class="form">
+              <dt class="field-label"><label for="userName">Post by:</label></dt>
+              <dd><input id="id_person" name="person" type="text" value="{{user.username}}"></dd>
+            </dl>
+            <dl class="form">
+              <dt class="field-label">Cover photo</dt>
+              <dd class="row cover-photo-container">
+                  <input id="id_image" name="picture" type="file" />
+                  <p class="caption">Choose your cover image to upload</p>
+              </dd>
+            </dl>
+            <dl class="form">
+              <dt class="field-label"><label for="content">Content</label></dt>
+              <dd><textarea id="id_body" name="body" rows="6"></textarea></dd>
+            </dl>
+            <div class="form-actions button-group text-center">
+            <button type="submit" id="send-form" name="submit" value="Create New Post"  class="button rounded primary large">Save</button>
+             </div>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+{% endblock %}
+
+{% block additional_script %}
+ 
+ <script src='http://ajax.googleapis.com/ajax/libs/dojo/1.8.1/dojo/dojo.js' type=" text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href='{% static "/assets/css/editor.css" %}' />
+  <script src='{% static "/assets/js/editor.js" %}' type=" text/javascript"></script>
+{% endblock %}

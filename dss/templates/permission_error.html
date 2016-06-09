@@ -1,0 +1,15 @@
+{% extends "base.html" %} 
+{% block content %}
+
+
+  <section class="form-wrapper signin-wrapper">
+    <div class="container">
+       <form action="auth_view" method="post">{% csrf_token %}
+      <div class="row">
+        <div class="col md-6 centered">
+          <h1>You do not have permission in this section</h1>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

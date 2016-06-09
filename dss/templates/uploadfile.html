@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="form-wrapper">
+<form action=confirm_upload method="post" enctype="multipart/form-data">{% csrf_token %}
+            <input type='hidden' name='csrfmiddlewaretoken' value='ZFCXFy6DUtKKHd0vF3cJCV7LOqGJf6wp' />
+            <div style="margin-left:100px;margin-right:100px;margin-top:20px;margin-bottom:50px">
+
+                <div align="center">
+                    <a align="center" style="font-size:20px;color:green">File</a>
+                    <input id="upload_file" name="upload_file" type="file"/>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <input type="submit" id="send-form" name="submit" value="Upload file" class="btn btn-green">
+<!--                <input type="file">-->
+            </div>
+        <input name='user' value="{{user.username}}" filename="{{filename}}" />
+</form>
+</section>
+
+{% endblock %}

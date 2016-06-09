@@ -1,0 +1,67 @@
+{% extends "base.html" %} {% block content %}
+<section class="form-wrapper signin-wrapper">
+    <div class="container">
+        <form action="profile" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div class="row">
+                <div class="col md-6 centered">
+                    <h1>Edit your profile ({{user.username}})</h1> 
+                    {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+                    <!--
+                        {% for field in form.visible_fields %}
+                            <dl class="form">
+                                <dt class="field-label">{{field.label}}</dt>
+                                <dd>
+                                    {{ field }}
+                                </dd>
+                            </dl>
+                        {% endfor %}             
+-->
+                    <dl class="form">
+                        <dt class="field-label"><label for="id_first_name">First name</label></dt>
+                        <dd>
+                            <input class="form-control" id="id_first_name" maxlength="30" name="first_name" type="text" value="{{user.first_name}}">
+                        </dd>
+                    </dl>
+                    <dl class="form">
+                        <dt class="field-label"><label for="id_last_name">Last name</label></dt>
+                        <dd>
+                            <input class="form-control" id="id_last_name" maxlength="30" name="last_name" type="text" value="{{user.last_name}}">
+                        </dd>
+                    </dl>
+                    <dl class="form">
+                        <dt class="field-label"><label for="id_institution">Institution</label></dt>
+                        <dd>
+                            <input class="form-control" id="id_institution" maxlength="30" name="institution" type="text" value="{{user.profile.institution}}">
+                        </dd>
+                    </dl>
+                    <dl class="form">
+                        <dt class="field-label"><label for="id_image">Avatar</label></dt>
+                        <dd>
+                            <input class="form-control" id="id_picture" name="picture" type="file">
+                        </dd>
+                    </dl>
+
+
+                    <div class="form-actions">
+                        <button type="submit" name="submit" class="button rounded" value="Create NewPost">Confirm</button>
+                    </div>
+                    {% if form.errors %}
+                    <dl class="form">
+                        <dt class="field-label">Sorry, that's not a valid form</dt>
+                    </dl>
+                    {% endif %}
+                    
+                    
+                   {% if messages %}
+                       {% for message in messages %} 
+                        <dl class="form">
+                        <dt class="field-label"><label for="id_first_name">{{message}}</label></dt>
+                       </dl>
+                        {% endfor %}
+                   {% endif %}
+                </div>
+        </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

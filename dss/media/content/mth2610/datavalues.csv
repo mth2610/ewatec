@@ -1,0 +1,8 @@
+DataValue,LocalDateTime,UTCOffset,SiteCode,VariableCode,CensorCode,SourceID,QualityControlLevelID,MethodDescription
+135,01/01/1980 01:00:00,7,1,WD,nc,1,0,No method specified
+45,01/01/1980 13:00:00,7,1,WD,nc,1,0,No method specified
+180,01/01/1980 19:00:00,7,1,WD,nc,1,0,No method specified
+135,01/02/1980 01:00:00,7,1,WD,nc,1,0,No method specified
+90,01/02/1980 07:00:00,7,1,WD,nc,1,0,No method specified
+45,01/02/1980 13:00:00,7,1,WD,nc,1,0,No method specified
+157.5,01/02/1980 19:00:00,7,1,WD,nc,1,0,No method specified

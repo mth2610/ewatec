@@ -1,0 +1,32 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col md-12">
+                <form action=confirm_upload method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <input type='hidden' name='csrfmiddlewaretoken' value='ZFCXFy6DUtKKHd0vF3cJCV7LOqGJf6wp' />
+                    <h1>Import Variable</h1>
+                    <div class="blog blog-container">
+                        <div class="blog-content">
+                            <p>Choose your variable file to upload. Notice that your file name have to be <code>variables.csv</code>. Please review <a href="/database/download_sample/variables.csv/">sample file</a> to know how to prepare your data.</p>
+                            <p>Your data must not exist our system otherwise it will raise an error. To ensure that you will not insert duplicated data, please look at this file carefully <a href="/database/download_sample/available_variables.csv/">available_variables.csv</a>
+                            </p>
+                            <p>You also should check others tables related to "varibales" table to prepare variable table correctly.<a href="/database/download_sample/DataTypeCV.csv/">Data Type CV</a> - <a href="/database/download_sample/GeneralCategoryCV.csv/">General Category CV</a> - <a href="/database/download_sample/SampleMediumCV.csv/">SampleMedium CV</a> - <a href="/database/download_sample/SpeciationCV.csv/">Speciation CV</a> - <a href="/database/download_sample/Units.csv/">Units</a> - <a href="/database/download_sample/ValueTypeCV.csv/">Value Type CV</a> - <a href="/database/download_sample/VariableNameCV.csv/">Variable Name CV</a></p>
+                            
+                            <div class="file-container">
+                                <p class="text-center"><input id="upload_file" name="upload_file" type="file" value="Add File"></p>
+                            </div>
+                            <p class="text-center"><input  id="send-form" type="submit" name="submit" class="button primary fa fa-cloud-upload" value="Upload file"></p>
+                        </div>
+                    </div>
+                    <input type='hidden' name='user' value={{user.username}} />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+.spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    text-align:center;
+    z-index:1234;
+    background-color: rgba(255,255,255,0.5);
+}
+
+.spinner img {
+    position: relative;
+    margin: 22% auto;
+    width: 200px;
+}

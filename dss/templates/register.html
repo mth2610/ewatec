@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %} 
+{% block content %}
+
+<section class="form-wrapper">
+  <div class="container">
+    <div class="row">
+<!--
+      <h1 class="col">Join VnMeteor</h1>
+      <div class="col md-5 lg-4 fr">
+        <div class="form-benefit fr">
+          
+          <ul>
+            <li><i class="fa fa-plus-circle"></i> Lorem ipsum dolor sit amet.</li>
+            <li><i class="fa fa-plus-circle"></i> Lorem ipsum dolor sit amet.</li>
+            <li><i class="fa fa-plus-circle"></i> Lorem ipsum dolor sit amet.</li>
+          </ul>
+        </div>
+      </div>
+-->
+      
+       
+        <div class="col md-6 centered">
+        <h1>Join VnMeteor</h1>
+         <form action=signup method="post" enctype="multipart/form-data">{% csrf_token %}
+          <dl class="form">
+            <dt class="field-label"><label for="userName">Username</label></dt>
+            <dt><input name="username" id="userName" type="text"></dt>
+          </dl>
+          <dl class="form">
+            <dt class="field-label">Email Address</dt>
+            <dt><input name="email" id="userEmail" type="text"></dt>
+          </dl>
+          <dl class="form">
+            <dt class="field-label">Password</dt>
+            <dt><input name="password1" id="userPassword" type="password"></dt>
+          </dl>
+          <dl class="form">
+            <dt class="field-label">Confirm your password</dt>
+            <dt><input name="password2" id="userConfirmPassword" type="password"></dt>
+          </dl>
+          <p class="tos">By clicking "Create account", you agree that you have read and accepted the VnMeteor <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+          <div class="form-actions text-right">
+            <button type="submit" class="button primary">Create account</button>
+          </div>
+          </form>
+        </div>
+      
+    </div>
+  </div>
+</section>
+
+{% endblock %}

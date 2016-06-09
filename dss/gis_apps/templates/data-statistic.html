@@ -1,0 +1,137 @@
+{% extends "base.html" %} {% block additional_script %}
+<!--{% load static %}-->
+<script src='{% static "/assets/js/statistics.js" %}'></script>
+<script src='{% static "/assets/js/scripts.min.js" %}' type="text/javascript" ></script>
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/graph.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/serial_analyis.min.css" %}' />
+
+{% endblock %}
+{% block content %}
+<section class="graph-wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col md-12">
+          <h1>Time serial statistic</h1>
+          <div class="row">
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">ID</label></dt>
+                <dd><input id="id" type="text" value='{{id}}' readonly="readonly"></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Variable</label></dt>
+                <dd><input id="variable" type="text" value='{{variable}}' readonly="readonly" ></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">From</label></dt>
+                <dd><input id="starttime" type="text" value='{{starttime}}'></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">To</label></dt>
+                <dd><input id="endtime" type="text" value='{{endtime}}'></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Remove outliers</label></dt>
+                <dd><input type="checkbox" id ="removeOutliers"></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Fill missing data</label></dt>
+                <dd><input type="checkbox" id ="fillingData"></dd>
+              </dl>
+            </div>
+
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Linear regression line</label></dt>
+                <dd><input type="checkbox" id ="linear_regression"></dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="graph-container">
+            <ul class="statistic tab-head no-mobile"><li data-target="initial_data" class="selected"><a href ="#">Initial Data</a></li><li data-target="outlierDetection" ><a href ="#">Outlier Detection</a></li><li data-target="yearly"><a href ="#">Yearly</a></li><li data-target="monthly"><a href ="#">Monthly</a></li><li data-target="daily"><a href ="#">Daily</a></li><li data-target="hourly"><a href ="#">Hourly</a></li><li data-target="histogram"><a href ="#">Histogram</a></li><li data-target="avgMonthly"><a href ="#">Average Monthly</a></li></ul>
+
+            <div class="graph view" id="initial_data">
+            <ul class="statistic tab-head"><li data-target="initial_data" class="selected"><a href="#">Yearly</a></li></ul>
+              <div class="statistic-content" id="initial_data_content">
+              <p>If you want to view more initial data, please click the button <button id="initial_statistic">Initial Data</button> </p>
+              </div>
+            </div>
+
+            <div class="graph" id="outlierDetection">
+            <ul class="statistic tab-head"><li data-target="outlierDetection" ><a href="#">Yearly</a></li></ul>
+              <div class="statistic-content" id="oulierDectectionContent">
+              <p>If you want to make outlies analysis, please click the button <button id="outlierAnalysis"> Outlier analysis</button> </p>
+               <p>
+                    <dl class="form">
+                        <dt class="field-label"><label for="userName">Outlier dection method</label></dt>
+                        <dd>
+                            <select id="outliersDetectionMethod">
+                                <option value="medianFilter">Median filter</option>
+                                <option value="ffaFilter">FFA filter</option>
+                                <option value="nonParametricMethod">Non parametric method </option>
+                            </select>
+
+                        </dd>
+                    </dl>
+               </p>
+
+              </div>
+            </div>
+
+            <div class="graph" id="yearly">
+              <ul class="statistic tab-head"><li data-target="yearly" ><a href="#">Yearly</a></li></ul>
+              <div class="statistic-content" id ="yearly_content" >
+              <p>If you want to do more yearly analysis, please click the button <button id="yearly_statistic">Yearly Statistic</button> </p>
+              </div>
+            </div>
+
+            <div class="graph" id="monthly">
+              <ul class="statistic tab-head"><li data-target="monthly"><a href="#">Monthly</a></li></ul>
+              <div class="statistic-content" id ="monthly_content">
+              <p>If you want to do more yearly analysis, please click the button <button id="monthly_statistic">Monthly Statistic</button> </p>
+              </div>
+            </div>
+
+            <div class="graph" id="daily">
+              <ul class="statistic tab-head"><li data-target="daily"><a href="#">Daily</a></li></ul>
+              <div class="statistic-content" id ="daily_content">
+            <p>If you want to do more yearly analysis, please click the button <button id="daily_statistic">Daily Statistic</button> </p>
+              </div>
+            </div>
+            <div class="graph" id="hourly">
+              <ul class="statistic tab-head"><li data-target="hourly"><a href="#">Hourly</a></li></ul>
+              <div class="statistic-content" id ="hourly_content">
+                            <p>If you want to do more yearly analysis, please click the button <button id="hourly_statistic">Hourly Statistic</button> </p>
+              </div>
+            </div>
+            <div class="graph" id="histogram">
+
+              <ul class="statistic tab-head"><li data-target="histogram"><a href="#">Histogram</a></li></ul>
+              <div class="statistic-content" id ="histogram_content">
+                                                       <p>If you want to do more histogram analysis, please click the button <button id="histogram_statistic">Histogram</button> </p>
+              </div>
+            </div>
+            <div class="graph" id="avgMonthly">
+              <ul class="statistic tab-head"><li data-target="avgMonthly"><a href="#">Average Monthly</a></li></ul>
+              <div class="statistic-content" id ="avgmonthly_content">
+            <p>If you want to do more average monthly analysis, please click the button <button id="averagemonthly_statistic">Average monthly statistic</button> </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

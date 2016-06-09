@@ -1,0 +1,43 @@
+{% extends "base.html" %} {% block content %}
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col md-12">
+                <h1>Blog <a class="button rounded fr btn_post" href="/documents/newpaper"><i class="fa fa-pencil-square-o"></i> New Blog Post</a></h1> {% for element in data %}
+                <article class="blog">
+                    <div class="col sm-12 md-2 blog-thumb"><img class="blog-img" src="{{ element.picture.url }}" alt="">
+                    </div>
+                    <div class="blog-content">
+                        <time datetime={{element.pub_date}} class="bar-time">{{element.pub_date}}</time>
+                        <h2><a href="/documents/{{element.id}}"> {{element.title}} </a></h2> {% autoescape off %}
+                        <p>{{element.body|truncatewords_html:60|linebreaks}}</p>
+                        {% endautoescape %}
+                    </div>
+                    <a class="read-article" href="/documents/{{element.id}}">Read Article →</a>
+                </article>
+                {% endfor %}
+                <div class="blog blog-more">
+<!--                <span class="loading"><img src="assets/images/482.GIF" alt=""><span class="lt">Loading...</span></span>-->
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if data.has_previous %}
+                                <a href="/documents/showpage/{{ data.previous_page_number }}/">previous</a>
+                            {% endif %}
+
+                            <span class="current">
+                                Page {{ data.number }} of {{ data.paginator.num_pages }}.
+                            </span>
+
+                            {% if data.has_next %}
+                                <a href="/documents/showpage/{{ data.next_page_number }}/">next</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

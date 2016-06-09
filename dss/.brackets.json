@@ -1,0 +1,10 @@
+{
+    "jscodehints.detectedExclusions": [
+        "/home/mth2610/Desktop/webapps/ewatec/dss/media/geojson/landuse.js",
+        "/home/mth2610/Desktop/webapps/ewatec/dss/static/js/statistics.js",
+        "/home/mth2610/Desktop/webapps/ewatec/dss/media/geojson/provinces.js",
+        "/home/mth2610/Desktop/webapps/ewatec/dss/collectedstatic/assets/js/scripts.js",
+        "/home/mth2610/Desktop/webapps/ewatec/dss/static/js/gisbase.js",
+        "/home/mth2610/Desktop/webapps/ewatec/dss/static/js/multivariate_statistic.js"
+    ]
+}

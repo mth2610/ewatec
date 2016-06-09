@@ -1,0 +1,156 @@
+{% extends "base.html" %} 
+{% block additional_script %} 
+{% load static %}
+<script src='{% static "/assets/js/multivariate_statistic.js" %}'></script>
+<script src='{% static "/assets/js/scripts.min.js" %}' type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/graph.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/multivariableAnalyis.css" %}' />
+{% endblock %} 
+{% block content %}
+<section class="graph-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col md-12">
+                <h1>Multivariate analysis</h1>
+                <div class="row">
+                    <div >
+                        <table class="striped">
+                            <thead>
+                                <tr>
+                                    <th>SiteID</th>
+                                    <th>SiteName</th>
+                                    <th>Variable</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th class="removeoutlier">Remove Outlier</th>
+                                    <th class="fillingData">Fill data</th>
+                                    <th class="check">Analysis</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for data in data_list %}
+                                <tr>
+                                    <td class="id">{{data.0}}</td>
+                                    <td class="sitename">{{data.4}}</td>
+                                    <td class="variable">{{data.1}}</td>
+                                   <td class="starttime">
+                                        <input type="text" id="Starttime_{{data.0}}_{{data.1}}" value="{{data.2}}">
+                                    </td>
+                                    <td class="endtime">
+                                        <input type="text" id="Endtime_{{data.0}}_{{data.1}}" value="{{data.3}}">
+                                    </td>
+
+                                    <td class="check">
+                                        <input type="checkbox" id_="{{data.0}}" variable="{{data.1}}" starttime="{{data.2}}" endtime={{data.3}} class="ck_removeoutliers" id="Removeoutlier_{{data.0}}_{{data.1}}">
+                                    </td>
+
+                                    <td class="check">
+                                        <input type="checkbox" id_="{{data.0}}" variable="{{data.1}}" starttime="{{data.2}}" endtime={{data.3}} class="ck_removeoutliers" id="fillingData_{{data.0}}_{{data.1}}">
+                                    </td>
+
+                                    <td class="check">
+                                        <input type="checkbox" id_="{{data.0}}" variable="{{data.1}}" starttime="{{data.2}}" endtime={{data.3}} class="ck_ana" id= "Ana_{{data.0}}_{{data.1}}">
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col md-3">
+
+                        <div>
+                            <dl class="form">
+                                <dt class="field-label"><label for="userName">Time step</label></dt>
+                                <dd>
+                                    <select id="timestep">
+                                        <option value="D">Daily</option>
+                                        <option value="H">Hourly</option>
+                                        <option value="M">Monthly</option>
+                                        <option value="AS">Yearly</option>
+                                    </select>
+
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div>
+                            <dl class="form">
+                                <dt class="field-label"><label for="userName">Dependent variable</label></dt>
+                                <dd>
+                                    <select id="dependentVariable">
+                                        {% for data in data_list %}
+                                        <option value="{{data.0}},{{data.1}}"> {{data.1}} ({{data.4}})</option>
+
+                                        {% endfor %}
+                                    </select>
+
+                                </dd>
+                            </dl>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="graph-container">
+                    <ul class="statistic tab-head no-mobile">
+                        <li data-target="general" class="selected"><a href="#">General analysis</a>
+                        </li>
+                        <li data-target="linearRegression"><a href="#">Linear regression</a>
+                        </li>
+                        <li data-target="multipleBoxPlot"><a href="#">Box plot</a>
+                        </li>
+                    </ul>
+
+                    <div class="graph view" id="general">
+                        <ul class="statistic tab-head">
+                            <li data-target="general" class="selected"><a href="#">General analysis</a></li>
+                        </ul>
+                        <div class="statistic-content ro" id="general_content">
+                            <div class="row">
+                                <p>If you want to view more general analysis, please click the button
+                                    <button id="general_analysis">General analysis</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="graph" id="linearRegression">
+                        <ul class="statistic tab-head">
+                            <li data-target="linearRegression"><a href="#"> Linear regression </a></li>
+                        </ul>
+                        <div class="statistic-content" id="linearRegressionContent">
+                            <div class="row">
+                                <p>If you want to do linear regression plese click
+                                    <button id="linearRegressionAnalysis">Linear regression</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="graph" id="multipleBoxPlot">
+                        <ul class="statistic tab-head">
+                            <li data-target="multipleBoxPlot"><a href="#">Multiple boxplot</a></li>
+                        </ul>
+                        <div class="statistic-content" id="multipleBoxPlotContent">
+                            <div class="row">
+                                <p>If you want to view box plot plese click
+                                    <button id="multipleBoxPlotAnalysis">Multiple boxplot</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

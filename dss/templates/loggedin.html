@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block content %}
+<section class="form-wrapper signin-wrapper">
+    <div class="container">
+        <h2>Hi {{full_name}} you are now logged in!</h2>
+        <p>Click <a href="/auth/logout">here</a> to logout.</p>
+
+        <p>Click <a href="/auth/profile">here</a> to edit your profile information</p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,2 @@
+VariableCode,VariableName,Speciation,VariableUnitsName,SampleMedium,ValueType,IsRegular,TimeSupport,TimeUnitsName,DataType,GeneralCategory,NoDataValue
+WD,Wind direction,Unknown,degree      ,Wind direction and Wind Speed,Field Observation,FALSE,24,minute,Average,Climate,-9999

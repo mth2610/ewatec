@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Environmental Informatics</title>
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/base.min.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/main.min.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/blog.min.css" %}' />
+    <link rel="stylesheet" type="text/css" href='{% static "/assets/css/spinner.css" %}' />
+    <script src='{% static "/assets/js/jquery-1.11.2.min.js" %}' type=" text/javascript"></script>
+    <script src='{% static "/assets/js/scripts.min.js" %}'></script>
+    <script src='{% static "/assets/js/spinner.js" %}' type="text/javascript"></script>
+    <div id="spinner" class="spinner" style="display:none;">
+        <img id="img-spinner" src="/media/images/ajax-loader.svg" alt="Loading" />
+    </div>
+</head>
+
+<body>
+  {% block header %}
+  <header>
+    <div class="site-header" id="siteHeader">
+      <div class="container">
+        <div class="row">
+          <div class="col sm-12 md-2 site-logo anim-all">
+            <a href="/">VnMeteor</a>
+          </div>
+          <div class="col sm-12 md-10">
+            <nav>
+              <ul class="site-nav anim-all">
+                <li><a class="head-link" href="/gis/basemap">Map</a>
+                </li>
+                <li><a class="head-link" href="/documents/showpage/1/">Blog</a>
+                </li>
+                <li><a class="head-link" href="/contact/view_contact">Contact</a>
+                </li>
+                {% if not user.is_authenticated %}
+                <li class="actions button-group fr">
+                  <a href="/auth/signup" class="button primary"><span class="lbl">Sign up</span><i class="fa fa-user-plus"></i></a>
+                  <a href="/auth/login" class="button "><span class="lbl">Sign in</span><i class="fa fa-sign-in"></i></a>
+                </li>
+                {% else %}
+                <div class="popup-account anim-o" id="popAcc">
+                  <div class="caret dark"></div>
+                  <div class="caret"></div>
+                  <div class="big-avatar">
+                  {% if user.profile.picture %}
+                  <img  src="{{user.profile.picture.url}}">
+                  {% else %}
+                   <img src="/media/user_avatar/guest_avatar.jpg">
+                  {% endif %}
+                  </div>
+                  <div class="userinfo">
+                    <div class="name" id="username" username={{user.username}}>{{user.username }}</div>
+                    <div class="acc"><a href="/auth/profile">My Account</a>
+                    </div>
+                    <a class="button signout" href="/auth/logout">Sign Out</a>
+                  </div>
+                </div>
+                <li class="actions _hpop fr user" data-target="popAcc">
+                <a href="#">
+                <span class="name">{{user.username }}</span>
+                <span class="avatar">
+                {% if user.profile.picture %}
+                <img class="circle" src="{{user.profile.picture.url}}" alt="">
+                {% else %}
+                <img class="circle" src="/media/user_avatar/guest_avatar.jpg">
+                {% endif %}
+                </span>
+                </a>
+                </li>
+                {% endif %}
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  {% endblock %} 
+  
+  {% block content %}
+  <section class="blog-wrapper">
+    This is the content area
+  </section>
+  {% endblock %} 
+  
+  {% block footer %}
+  <footer id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col md-3">
+          <h5>Contacts</h5>
+          <ul>
+            <li>142 To Hien Thanh street, Ward 14, District 10, Ho Chi Minh city, Viet Nam</li>
+            <li>Phone 1: +84-8-38651132 (ext.:31)</li>
+            <li>Phone 2: 08 123456</li>
+            <li>Email: <a href="mailto:mth2610@gmail.com">mth2610@gmail.com</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col md-3 social-list">
+          <h5>Keep in Touch</h5>
+          <a href="#"><i class="fa fa-twitter"></i></a>
+          <a href="#"><i class="fa fa-facebook"></i></a>
+          <a href="#"><i class="fa fa-google-plus"></i></a>
+        </div>
+        <div class="col md-6">
+          <h5>About Us</h5>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure commodi nisi vitae, reprehenderit neque ipsam.</p>
+        </div>
+      </div>
+      <div class="row copyright">
+        <div class="col md-12">Copyright © 2015 Institute of Environment and Resources, Vietnam National University of Ho Chi Minh city. (IER)</div>
+      </div>
+    </div>
+  </footer>
+ 
+ {% endblock %}
+  
+
+{% block additional_script %}
+
+  {% endblock %}
+
+</body>
+
+</html>

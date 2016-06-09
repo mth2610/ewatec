@@ -1,0 +1,152 @@
+ 
+  {% extends "base.html" %} 
+      {% load static %}
+    {% block additional_script %}
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/ol.css" %}' />
+<script src='{% static "/assets/js/ol.js" %}' type=" text/javascript"></script>
+<script>
+    var view = new ol.View({
+        center: ol.proj.transform([106.787281, 10.878854], 'EPSG:4326', 'EPSG:3857'),
+        zoom: 15,
+    });
+
+    
+    var iconFeature = new ol.Feature({
+      geometry: new ol.geom.Point(ol.proj.transform([106.787281, 10.878854], 'EPSG:4326', 'EPSG:3857')),
+      name: 'Institute for Environment and Resources',
+    });
+    
+
+
+    var img = new ol.style.Circle({
+        fill: new ol.style.Fill({
+              color: 'rgba(250,5,5,1)'
+             }),
+        radius: 7,
+        stroke: new ol.style.Stroke({
+        color: 'rgba(250,5,5,1)',
+        width: 1,
+      }),
+    });
+    
+    var textStroke = new ol.style.Stroke({
+      color: '#fff',
+      width: 3
+    });
+    
+    var textFill = new ol.style.Fill({
+      color: '#000',
+      visible: true,
+    });
+    
+    var point_style = new ol.style.Style({
+        image:img,
+        text: new ol.style.Text({
+          font: '12px Calibri,sans-serif',
+          text: 'Institute of Environment and Resources',
+          fill: textFill,
+          stroke: textStroke,
+          labelXOffset: '-1000px',
+          labelYOffset: '-1000px',
+        }),
+    });
+    
+    var vectorSource = new ol.source.Vector({
+      features: [iconFeature]
+    });
+
+    var vectorLayer = new ol.layer.Vector({
+      source: vectorSource,
+      style: [point_style]
+    });
+    
+    var basemap = new ol.layer.Tile({
+            style: 'osm',
+            source: new ol.source.OSM()
+        });
+    
+    var map = new ol.Map({
+        controls: ol.control.defaults({
+            attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                collapsible: false
+            })
+        }),
+        target: document.getElementById('map'),
+        layers: [basemap,vectorLayer],
+        view: view
+    });
+</script>
+    {% endblock %}
+   {% block content %}
+    <section class="blog-wrapper">
+    <div class="container contact-form">
+      <div class="row">
+        <div class="col md-12">
+          <div class="row blog">
+            <div class="col md-6">
+              
+              <div class="con address">
+                <h3>Department of Environmental Infomatics</h3>
+                <p>Institute of Environment and Resources, Vietnam National University of Ho Chi Minh city. (IER)</p>
+                <p>Address: 142 To Hien Thanh street, Ward 14, District 10, Ho Chi Minh city, Viet Nam</p>
+              </div>
+               <div class="con mailUs">
+                <h3>Email Us</h3>
+                <p>Head of The Department: <a href="#">hongquanmt@yahoo.com (Dr. Quan)</a></p>
+                <p>Front-end: <a href="#">haan.an@yahoo.com.vn (Mr.An)</a></p>
+                <p>Back-end: <a href="#">mth2610@gmail.com (Mr.Thang)</a></p>
+                <p>Database: <a href="#">trangthuyvo.hcmus@gmail.com  (Ms.Trang)</a></p>
+              </div>
+<!--
+              <div class="con callUs">
+                <h3>Call Us</h3>
+                <p>+84 13245678</p>
+              </div>
+-->
+
+            </div>
+            <div class="col md-6">
+              <h3>How can we help you?</h3>
+              <form action=save_contact method="post" enctype="multipart/form-data">{% csrf_token %}
+              <dl class="form">
+                <dt class="field-label"><label for="id_first_name">First Name *</label></dt>
+                <dd><input id="id_first_name" name="first_name" type="text"></dd>
+              </dl>
+              <dl class="form">
+                <dt class="field-label"><label for="id_last_name">Last Name *</label></dt>
+                <dd><input id="id_last_name" name="last_name" type="text"></dd>
+              </dl>
+              <dl class="form">
+                <dt class="field-label"><label for="id_email">Your email address *</label></dt>
+                <dd><input id="id_email" name="email" type="text"></dd>
+              </dl>
+              <dl class="form">
+                <dt class="field-label"><label for="id_content">Content *</label></dt>
+                <dd><textarea id="id_content" name="content" rows="6"></textarea></dd>
+              </dl>
+              <div class="form-actions button-group"><button type="submit" class="button rounded primary">Send</button></div>
+            </form>
+                {% if form.errors %}
+                    <dl class="form">
+                        <dt class="field-label"><font color="red">Sorry, that's not a valid form</font></dt>
+                    </dl>
+                {% endif %}
+                    
+               {% if messages %}
+                   {% for message in messages %} 
+                        <dl class="form">
+                        <dt class="field-label"><label for="id_first_name">{{message}}</label></dt>
+                       </dl>
+                    {% endfor %}
+               {% endif %}
+            </div>
+          </div>
+        </div>
+        <div id = "map" class="col md-12"></div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+
+

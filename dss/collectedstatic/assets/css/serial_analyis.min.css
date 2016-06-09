@@ -1,0 +1,20 @@
+.analysisResult {
+
+}
+
+.analysisTitle {
+    background-color: #7EA94F; 
+    height: 50px; 
+}
+
+.analysisResultContent{
+    margin-top:  10px; 
+    margin-bottom: 500px;
+}
+
+.removeAnalysis{
+    display: none;
+}
+.analysisTitle:hover .removeAnalysis {
+   display:block; 
+}

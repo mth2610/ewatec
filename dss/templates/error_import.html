@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %} 
+{% block content %}      
+           
+<section class="blog-wrapper">
+    <div class="container">
+        <div class="row">
+            <h1><font color="red">Importing Error</font></h1>
+            <div class="col md-12">
+                <div class="blog blog-container">
+                    <div class="blog-content">
+                        <p>There are something wrong when importing the data. That might be caused by your data is not in corrected format or your data have already existed in our system</p>
+                        <p>Please review available data on our system and make sure that your data is in corrected format then insert again. In the case, your data is in correct but it still can not import into our system, you should send us an email attached with your data </p>
+                        <p class="centered">
+                        <div class="row tool-group centered">
+                            <a href="/database/upload_methods">
+                                <div class="col xs-4 tool ">
+                                    <i class="fa fa-medium"></i>
+                                    <div class="label"> Import Methods</div>
+                                </div>
+                            </a>
+                            <a href="/database/upload_sources">
+                                <div class="col xs-4 tool">
+                                    <i class="fa fa-database"></i>
+                                    <div class="label">Import Sources</div>
+                                </div>
+                            </a>
+                            <a href="/database/upload_variables">
+                                <div class="col xs-4 tool">
+                                    <i class="fa fa-cubes"></i>
+                                    <div class="label">Import Variables</div>
+                                </div>
+                            </a>
+                            <a href="/database/upload_sites">
+                                <div class="col xs-4 tool">
+                                    <i class="fa fa-file-code-o"></i>
+                                    <div class="label">Import Sites</div>
+                                </div>
+                            </a>
+                            <a href="/database/upload_datavalues">
+                                <div class="col xs-4 tool">
+                                    <i class="fa fa-list-alt"></i>
+                                    <div class="label">Import Datavalues</div>
+                                </div>
+                            </a>
+                        </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

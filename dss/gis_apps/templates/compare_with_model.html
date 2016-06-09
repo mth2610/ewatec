@@ -1,0 +1,117 @@
+{% extends "base.html" %} {% block additional_script %}
+<!--{% load static %}-->
+<script src='{% static "/assets/js/model_validation.js" %}'></script>
+<script src='{% static "/assets/js/scripts.min.js" %}' type="text/javascript" ></script>
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/graph.min.css" %}' />
+	
+{% endblock %} 
+{% block content %}
+<section class="graph-wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col md-12">
+          <h1>Modelling validation</h1>
+          <div class="row">
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">ID</label></dt>
+                <dd><input id="id" type="text" value='{{id}}'></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Variable</label></dt>
+                <dd><input id="variable" type="text" value='{{variable}}'></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">From</label></dt>
+                <dd><input id="starttime" type="text" value='{{starttime}}'></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">To</label></dt>
+                <dd><input id="endtime" type="text" value='{{endtime}}'></dd>
+              </dl>
+            </div>
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Remove outliers (just for real data)</label></dt>
+                <dd><input type="checkbox" id ="removeoutlier"></dd>
+              </dl>
+            </div>
+            
+            
+            <div class="col md-3">
+                    <dl class="form">
+                        <dt class="field-label"><label for="userName">Observation plot type</label></dt>
+                        <dd>
+                            <select id="observation-plot">
+                                <option value="line">Line</option>
+                                <option value="point">Point</option>
+                            </select>
+                        </dd>
+                    </dl>
+            </div>
+            
+            <div class="col md-3">
+                    <dl class="form">
+                        <dt class="field-label"><label for="userName">Simulation plot type</label></dt>
+                        <dd>
+                            <select id="simulation-plot">
+                                <option value="line">Line</option>
+                                <option value="point">Point</option>
+                            </select>
+                        </dd>
+                    </dl>
+            </div>
+            
+            <div class="col md-3">
+                    <dl class="form">
+                        <dt class="field-label"><label for="userName">Time step</label></dt>
+                        <dd>
+                            <select id="timestep">
+                                <option value="D">Daily</option>
+                                <option value="H">Hourly</option>
+                                <option value="M">Monthly</option>
+                                <option value="AS">Yearly</option>
+                            </select>
+                        </dd>
+                    </dl>
+            </div>
+          </div>
+          
+          <div class="graph-container">
+            <ul class="statistic tab-head no-mobile">
+                <li data-target="initial" class="selected"><a href="#">Initial analysis</a>
+                </li>
+                <li data-target="residual"><a href="#">Residual analsis</a>
+                </li>
+            </ul>
+            
+            <div class="graph view" id="initial">
+            <ul class="statistic tab-head"><li data-target="initial" class="selected"><a href="#">Initial analysis</a></li></ul>
+              <div class="statistic-content" id="initial_content">
+              <p>If you want to view more initial data, please click the button <button id="initial_analysis">Initial analysis</button>                 </p>
+              </div>
+            </div>
+            
+            <div class="graph" id="residual">
+            <ul class="statistic tab-head"><li data-target="residual"><a href="#">Residual analysis</a></li></ul>
+              <div class="statistic-content" id="residual_content">
+              <p>If you want to view more initial data, please click the button <button id="residual_analysis">Residual analysis</button>                 </p>
+              </div>
+            </div>
+            
+          </div>
+          
+          
+        </div>
+      </div>
+    </div>
+    <input type='hidden' id="file-path" name='file_path' value={{file_path}} />
+  </section>
+  
+{% endblock %}
