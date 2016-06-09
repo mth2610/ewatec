@@ -1,11 +1,11 @@
 # EWATEC
-This is a web-based platform buit on top ODM (observational data model) for sharing environmental data 
+This is a web-based platform buit on top ODM (observational data model) for sharing environmental data.
 ## Features
 
 ## Setup database 
 
 ## Setup environment
-## Install GDAL in virtualenv
+### Install GDAL in virtualenv
 *GDAL library must have been installed.
 `sudo apt-get install libgdal-dev`.
 *Now install Python binding for GDAL.
