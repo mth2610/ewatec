@@ -1,6 +1,5 @@
 # EWATEC
-This is a web-based platform for sharing environmental data buit on top ODM (observational data model)
-
+This is a web-based platform buit on top ODM (observational data model) for sharing environmental data 
 # Features
 
 # Setup database 
