@@ -16,7 +16,7 @@ This is a web-based platform buit on top ODM (observational data model) for shar
 ```
 export CPLUS_INCLUDE_PATH=/usr/include/gdal
 export C_INCLUDE_PATH=/usr/include/gdal
-pip install GDAL
+pip install GDAL==1.11.2
 ```
 ### Install requirements
 `pip install -r requirements.txt`
