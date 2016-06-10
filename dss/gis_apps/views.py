@@ -37,6 +37,8 @@ from gislib import serial_statistics
 from gislib import sh2ra
 from gislib import multivariate_statistics
 from gislib import shp2geojson
+from database import ODM
+from django.db import connection
 
 dbname = "DEI3"
 user = "postgres"
@@ -190,11 +192,8 @@ def update_geojson(request):
     landuse_geojson.write(landuse_geojs_string)
     landuse_geojson.close()
 
-
     args = []
     return HttpResponseRedirect('/gis/basemap')
-
-
 
 def stations(request):
     from vectorformats.Formats import Django, GeoJSON
@@ -207,8 +206,6 @@ def stations(request):
 #    return render_to_response('gisbase.html',args)
     return HttpResponse(stations)
 
-
-
 def some_view(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -219,7 +216,6 @@ def some_view(request):
     writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
 
     return response
-
 
 @csrf_exempt
 def data_review(request):
@@ -280,33 +276,14 @@ def data_download(request):
         selected_variable = request.POST.getlist('selected_variable[]',[0,0,0,0])
         selected_starttime = request.POST.getlist('selected_starttime[]',[0,0,0,0])
         selected_endtime = request.POST.getlist('selected_endtime[]',[0,0,0,0])
+        dbConnection = connection
+        dbCursor = dbConnection.cursor()
 
-        connection = psycopg2.connect(dbname=dbname, user=user, password=password, host = host, port = port)
-        connection.commit()
+        # Create SiteCode, SiteID,
+        siteLib = ODM.createLookupTable(dbCursor,'dbo."Sites"','SiteID','SiteName')
 
-
-        ## Create variable libary
-        variable_dictonary = {}
-        variable_data = connection.cursor()
-        variable_data.execute('SELECT "VariableName","VariableID" FROM dbo."Variables"')
-        connection.commit()
-        variable_data = variable_data.fetchall()
-        for element in variable_data:
-            variable_dictonary.update({(element[0]).rstrip():element[1]})
-
-
-
-        ## Create SiteID, SiteName libary
-
-        SiteID_SiteName_lib = {}
-        SiteID_SiteName = connection.cursor()
-        SiteID_SiteName.execute('SELECT "SiteID", "SiteName" FROM dbo."Sites"')
-        connection.commit()
-        SiteID_SiteName = SiteID_SiteName.fetchall()
-
-        for element in SiteID_SiteName:
-            SiteID_SiteName_lib.update({element[0]:(element[1]).rstrip()})
-
+        # Create VariableCode, VariableID libary
+        variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
 
 
         n = len(selected_variable)
@@ -317,33 +294,15 @@ def data_download(request):
         zipfile = zipfile.ZipFile(BASE_DIR + url, "w")
 
         for i in range(n):
-            data = connection.cursor()
-            data_str = 'SELECT "LocalDateTime","DataValue" FROM dbo."DataValues" WHERE "SiteID" = '\
-                       + str(int(selected_id[i])) + ' AND "VariableID" = '\
-                       + str(variable_dictonary[((selected_variable[i]).rstrip()).replace("-"," ")])\
-                       + ' AND "LocalDateTime" >='\
-                       + "'"+str(selected_starttime[i])+"'"\
-                       + ' AND "LocalDateTime" <= '\
-                       + "'"+str(selected_endtime[i]) + "'"\
-					   + ' ORDER BY "LocalDateTime"'
-            data.execute(data_str)
+            data = ODM.getDataValue(dbConnection,int(selected_id[i]),
+                                    variableLib[selected_variable[i].rstrip().replace('-',' ')],
+                                    selected_starttime[i],selected_endtime[i],
+                                    requestUser='admin',timeZone='LocalDateTime',dateTimeFormat='%Y-%m-%d %H:%M:%S')
+            csv_filename = str(selected_id[i])+"_"+str(siteLib[int(selected_id[i])])\
+                           +"_"+str(selected_variable[i].rstrip())+"_"+str(selected_starttime[i])\
+                           +"_"+str(selected_endtime[i])+'.csv'
 
-            connection.commit()
-            data = data.fetchall()
-
-
-            csv_filename = str(selected_id[i])+"_"+str(SiteID_SiteName_lib[int(selected_id[i])])+"_"+str(selected_variable[i].rstrip())+"_"+str(selected_starttime[i])+"_"+str(selected_endtime[i])+'.csv'
-
-
-            csv_out = StringIO.StringIO()
-    #         create the csv writer object.
-            mywriter = csv.writer(csv_out)
-            mywriter.writerow(["Date","Value"])
-            for row in data:
-                mywriter.writerow([row[0], row[1]])
-
-            zipfile.writestr(csv_filename,csv_out.getvalue())
-            csv_out.close()
+            zipfile.writestr(csv_filename,data.to_csv())
 
         zipfile.close()
         return HttpResponse(url)
@@ -361,77 +320,37 @@ def show_graph(request):
     selected_variable = request.POST.get('variable')
     selected_starttime = request.POST.get('starttime')
     selected_endtime = request.POST.get('endtime')
-
-    print "test1"
+    selected_variable = selected_variable.replace('-',' ')
 
     if str(request.POST.get('removeoutlier')) == "True":
         remove_outliers_choices = True
     else:
         remove_outliers_choices = False
 
-    print "test2"
-    ## Get the data
-    connection = psycopg2.connect(dbname=dbname, user=user, password=password, host = host, port = port)
-    connection.commit()
-    variable_dictonary = {}
-    variable_data = connection.cursor()
-    variable_data.execute('SELECT "VariableName","VariableID" FROM dbo."Variables"')
-    connection.commit()
-    variable_data = variable_data.fetchall()
-    for element in variable_data:
-        variable_dictonary.update({(element[0]).rstrip():element[1]})
-    print "test3"
-    data = connection.cursor()
-    print "test4"
-    selected_variable = selected_variable.replace("-"," ")
-    print "test5"
-    print variable_dictonary
-    try:
-        data_str = 'SELECT "LocalDateTime","DataValue" FROM dbo."DataValues" WHERE "SiteID" = '\
-                     +str(int(selected_id)) + ' AND "VariableID" = '\
-                     +str(variable_dictonary[(selected_variable).rstrip()])\
-                     + ' AND "LocalDateTime" >='\
-                     + "'"+str(selected_starttime)+"'"\
-                     + ' AND "LocalDateTime" <= '\
-                     + "'"+str(selected_endtime) + "'"\
-                     + ' ORDER BY "LocalDateTime"'
-    except Exception as isnt:
-        print type(isnt)
-        print isnt.args
 
+    # Create VariableCode, VariableID libary
+    dbConnection = connection
+    dbCursor = dbConnection.cursor()
+    variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
 
-    print data_str
-    data.execute(data_str)
-    print "test6"
+    data = ODM.getDataValue(dbConnection,int(selected_id),
+                            variableLib[selected_variable.rstrip().replace('-',' ')],
+                            selected_starttime,selected_endtime,
+                            requestUser='admin',timeZone='LocalDateTime',dateTimeFormat='%Y-%m-%d %H:%M:%S')
 
-    connection.commit()
-    data = data.fetchall()
+    # Replace -9999 by np.nan
+    data = data.replace(-9999,np.nan)
 
-    t = []
-    value = []
-
-
-    for element in data:
-        t.append(element[0])
-        value.append(element[1])
-
-
-
-    for i in range(len(value)):
-        if float(value[i]) == -9999.0:
-            value[i] = np.nan
-        ## remove outliers
-
+    # Remove outliers before do stuffs
     if remove_outliers_choices == True:
-        value = serial_statistics.reject_outliers(value)
-    # Construct the graph
+        data['Value'] = serial_statistics.reject_outliers(data['Value'])
 
 ##----------------------------------------------------------**----------------------------------------------------------##
 # Look for variable type and unit
-    variable = connection.cursor()
+    variable = dbConnection.cursor()
     variable_str = 'SELECT "DataType", "VariableUnitsID" FROM dbo."Variables" WHERE "VariableName" = '+"'"+str((selected_variable).rstrip())+"'"
     variable.execute(variable_str)
-    connection.commit()
+    dbConnection.commit()
 
     variable_unit = variable.fetchall()
     variable_type = variable_unit[0][0].rstrip()
@@ -441,24 +360,25 @@ def show_graph(request):
     else:
         VariableType = 'sum'
 
-    unitname = connection.cursor()
+    unitname = dbConnection.cursor()
     unitname_str = 'SELECT "UnitsName" FROM dbo."Units" WHERE "UnitsID" = ' + str(unitid)
     unitname.execute(unitname_str)
-    connection.commit()
+    dbConnection.commit()
     unitname = unitname.fetchall()[0][0].rstrip()
 
 ##----------------------------------------------------------**----------------------------------------------------------##
 
-    img = serial_statistics.graph_in_endcode64(pd.DataFrame(value,index=t),selected_variable.rstrip(),unitname,linear_regression = False)
+    img = serial_statistics.graph_in_endcode64(data,selected_variable.rstrip(),unitname,linear_regression = False)
 
 
     # Set statistical parameters
     args = {}
-    args['standard_deviation'] = str(np.nanstd(value))
-    args['mean'] = str(np.nanmean(value))
-    args['min'] = str(np.nanmin(value))
-    args['max'] = str(np.nanmax(value))
-    args['cv'] = str(np.nanstd(value)/np.nanmean(value))
+    datavalue = list(data['Value'])
+    args['standard_deviation'] = str(np.nanstd(datavalue))
+    args['mean'] = str(np.nanmean(datavalue))
+    args['min'] = str(np.nanmin(datavalue))
+    args['max'] = str(np.nanmax(datavalue))
+    args['cv'] = str(np.nanstd(datavalue)/np.nanmean(datavalue))
 
     args['id'] = selected_id
     args['variable'] = selected_variable
@@ -2321,11 +2241,6 @@ def multipleBoxPlot(request):
     args['img'] = img
 
     return render_to_response('multipleBoxPlot.html',args,context_instance=RequestContext(request))
-
-
-
-
-
 
 @csrf_exempt
 @login_required(login_url="/auth/require_login")

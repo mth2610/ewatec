@@ -260,7 +260,11 @@ def updateSeriesCatalog(dbConnection,df):
 
         ## commit and close
         dbConnection.commit()
-def getDataValue(dbConnection,siteID,variableID,minDateTime,maxDateTime,requestUser='admin',timeZone='LocalDateTime'):
+        dbConnection.close()
+
+def getDataValue(dbConnection,siteID,variableID,
+                 minDateTime,maxDateTime,requestUser='admin',
+                 timeZone='LocalDateTime',dateTimeFormat="%m/%d/%Y %H:%M:%S"):
     """
         This is a function to extract data from dbo."DataValues"
         The input of the funtion is a pandas DataFrame
@@ -272,14 +276,13 @@ def getDataValue(dbConnection,siteID,variableID,minDateTime,maxDateTime,requestU
     extractCols = ["LocalDateTime","DataValue"]
     sortCol = "LocalDateTime"
 
-    if type(minDateTime) != datetime.datetime and type(maxDateTime)!= datetime.datetime :
-        minDateTime = datetime.datetime.strptime(minDateTime,"%m/%d/%Y %H:%M:%S")
-        maxDateTime = datetime.datetime.strptime(maxDateTime,"%m/%d/%Y %H:%M:%S")
+    if type(minDateTime) == str and type(maxDateTime)== str:
+        minDateTime = datetime.datetime.strptime(minDateTime,dateTimeFormat)
+        maxDateTime = datetime.datetime.strptime(maxDateTime,dateTimeFormat)
 
     if requestUser == 'admin':
         conditionCols = ["SiteID","VariableID"]
         selectTemp = selectTemplate(table,extractCols,conditionCols,sortCol,dateTimeField="LocalDateTime")
-        print selectTemp%(siteID,variableID,minDateTime,maxDateTime)
         dbCursor.execute(selectTemp,(siteID,variableID,minDateTime,maxDateTime))
 
     else:
@@ -290,7 +293,7 @@ def getDataValue(dbConnection,siteID,variableID,minDateTime,maxDateTime,requestU
     data = dbCursor.fetchall()
     dbConnection.close()
 
-    return pandas.DataFrame(data, columns=['DateTime','DataValue'])
+    return (pandas.DataFrame(data, columns=['DateTime','Value'])).set_index(['DateTime'])
 
 class Methods():
     def __init__(self, filePath,dbConnection):

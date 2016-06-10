@@ -30,6 +30,7 @@ import ogr, osr
 import pandas
 import pytz
 import ODM
+from django.db import connection
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
@@ -118,7 +119,7 @@ def confirm_upload(request):
 def save_methods(request):
     USER_NAME = request.user.username
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files')
-    dbConnection = ODM.createDBConection(dbname=dbname, user=user, password=password, host=host, port=port)
+    dbConnection = connection
     try:
         methodObj = ODM.Methods(FILE_DIR+'/methods.csv',dbConnection)
         methodObj.importData()
@@ -133,7 +134,7 @@ def save_methods(request):
 def save_sources(request):
     USER_NAME = request.user.username
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files')
-    dbConnection = ODM.createDBConection(dbname=dbname, user=user, password=password, host=host, port=port)
+    dbConnection = connection
     try:
         sourcesObj = ODM.Sources(FILE_DIR+'/sources.csv',dbConnection)
         sourcesObj.importData()
@@ -146,7 +147,7 @@ def save_sources(request):
 def save_variables(request):
     USER_NAME = request.user.username
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files')
-    dbConnection = ODM.createDBConection(dbname=dbname, user=user, password=password, host=host, port=port)
+    dbConnection = connection
     try:
         variablesObj = ODM.Variables(FILE_DIR+'/variables.csv',dbConnection)
         variablesObj.importData()
@@ -161,7 +162,7 @@ def save_variables(request):
 def save_sites(request):
     USER_NAME = request.user.username
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files')
-    dbConnection = ODM.createDBConection(dbname=dbname, user=user, password=password, host=host, port=port)
+    dbConnection = connection
     try:
         siteOject = ODM.Sites(FILE_DIR+'/sites.csv',dbConnection)
         siteOject.importData()
@@ -177,7 +178,7 @@ def save_sites(request):
 def save_datavalues(request):
     USER_NAME = request.user.username
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files')
-    dbConnection = ODM.createDBConection(dbname=dbname, user=user, password=password, host=host, port=port)
+    dbConnection = connection
     dataValuesObj = ODM.DataValues(FILE_DIR+'/datavalues.csv',dbConnection)
     dataValuesObj.importData()
     dbConnection.close()

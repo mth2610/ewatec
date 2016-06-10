@@ -18,6 +18,12 @@ export CPLUS_INCLUDE_PATH=/usr/include/gdal
 export C_INCLUDE_PATH=/usr/include/gdal
 pip install GDAL==1.11.2
 ```
+### Install ibfreetype6-dev libxft-dev (for matplotlib)
+`sudo apt-get install libfreetype6-dev libxft-dev`
+
+### Install gfortran libblas-dev liblapack-dev libatlas-base-dev  (for scipy numpy)
+`sudo apt-get install gfortran libblas-dev liblapack-dev libatlas-base-dev`
+
 ### Install requirements
 `pip install -r requirements.txt`
 
