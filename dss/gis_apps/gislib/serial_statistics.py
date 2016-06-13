@@ -38,7 +38,6 @@ def graph_in_endcode64(DF,variable="",unit="", title = "", linear_regression = F
         pass
 
     if title != "":
-        print title
         subplot.set_title(title)
 
 
@@ -386,9 +385,6 @@ class calibration_validation():
         spearman_r = spearman_correlation[0]
         spearman_p = spearman_correlation[1]
 
-        print mean_ob
-        print sum((ob_value-sm_value)**2)
-        print sum((ob_value-mean_ob)**2)
         nash = 1 - sum((ob_value-sm_value)**2)/sum((ob_value-mean_ob)**2)
 
         para_dict = {'min_sm':min_sm,'max_sm':max_sm,'mean_sm':mean_sm,'median_sm':median_sm,'std_sm':std_sm,'cv_sm':cv_sm,'min_ob':min_ob,'max_ob':max_ob,'mean_ob':mean_ob,'median_ob':median_ob,'std_ob':std_ob,'cv_ob':cv_ob,'pearson_r':pearson_r,'pearson_p':pearson_p,'spearman_r':spearman_r,'spearman_p':spearman_p,'nash':nash}

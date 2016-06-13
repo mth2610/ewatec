@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     function getCookie(name) {
         var cookieValue = null;
-        if (document.cookie && document.cookie != '') {
+        if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
                 var cookie = jQuery.trim(cookies[i]);
@@ -18,6 +18,9 @@ $(document).ready(function () {
     }
     var csrftoken = getCookie('csrftoken');
 
+    $('.datetimepicker').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+    
+
     $(document).click(function (e) {
         var $that = $(e.target);
         // -----------------------------------------Extract data-----------------------------------------
@@ -29,20 +32,20 @@ $(document).ready(function () {
             var start_time = document.getElementById("starttime").value;
             var end_time = document.getElementById("endtime").value;
             var timstep = ($that.closest("#extract_data")[0]).getAttribute("timestep");
-            
-            if(document.getElementById("removeOutliers").checked == true){
+
+            if(document.getElementById("removeOutliers").checked === true){
                 var removeOutliers = "True";
             }else{
                 var removeOutliers = "False";
             };
-            
+
             if(document.getElementById("fillingData").checked == true){
                 var fillingData = "True";
             }else{
                 var fillingData = "False";
             };
-            
-            
+
+
             $.ajax({
                 async:true,
                 type: 'POST',
@@ -58,7 +61,7 @@ $(document).ready(function () {
                 },
                 complete: function() {
                 $("#spinner").hide();
-                },  
+                },
                 success: function (url) {
                     window.location = url;
                 },
@@ -72,32 +75,32 @@ $(document).ready(function () {
             });
         };
         // -----------------------------------------Monthly Graph-----------------------------------------
-        if ($that.closest("#monthly_statistic")[0] || $that.closest("#yearly_statistic")[0] || $that.closest("#daily_statistic")[0] || $that.closest("#hourly_statistic")[0]|| $that.closest("#initial_statistic")[0]) {      
+        if ($that.closest("#monthly_statistic")[0] || $that.closest("#yearly_statistic")[0] || $that.closest("#daily_statistic")[0] || $that.closest("#hourly_statistic")[0]|| $that.closest("#initial_statistic")[0]) {
             $("#spinner").show();
             var id = String(document.getElementById("id").value);
             var varibale = String(document.getElementById("variable").value);
             var start_time = String(document.getElementById("starttime").value);
             var end_time = String(document.getElementById("endtime").value);
             var id_container;
-            
+
             if(document.getElementById("removeOutliers").checked == true){
                 var removeOutliers = "True";
             }else{
                 var removeOutliers = "False";
             };
-            
+
             if(document.getElementById("fillingData").checked == true){
                 var fillingData = "True";
             }else{
                 var fillingData = "False";
             };
-            
+
             if(document.getElementById('linear_regression').checked == true){
                 var linear_regression = "True";
             }else{
                 var linear_regression = "False";
             };
-            
+
             if ($that.closest("#yearly_statistic")[0]) {
                 var timestep = "AS";
                 id_container = "yearly_content";
@@ -131,7 +134,7 @@ $(document).ready(function () {
                 },
                 complete: function() {
                 $("#spinner").hide();
-                },  
+                },
                 success: function (data) {
                     $(document.getElementById(id_container)).append(data)
 
@@ -153,26 +156,26 @@ $(document).ready(function () {
             var start_time = String(document.getElementById("starttime").value);
             var end_time = String(document.getElementById("endtime").value);
             var id_container = "histogram_content";
-            
+
             if(document.getElementById("removeOutliers").checked == true){
                 var removeOutliers = "True";
             }else{
                 var removeOutliers = "False";
             };
-            
+
             if(document.getElementById("fillingData").checked == true){
                 var fillingData = "True";
             }else{
                 var fillingData = "False";
             };
 
-            
+
             if(document.getElementById('linear_regression').checked == true){
                 var linear_regression = "True";
             }else{
                 var linear_regression = "False";
             };
-            
+
             $.ajax({
                 async:true,
                 type: 'POST',
@@ -188,7 +191,7 @@ $(document).ready(function () {
                 },
                 complete: function() {
                 $("#spinner").hide();
-                },  
+                },
                 success: function (data) {
                     $(document.getElementById(id_container)).append(data)
                 },
@@ -207,20 +210,20 @@ $(document).ready(function () {
             var start_time = String(document.getElementById("starttime").value);
             var end_time = String(document.getElementById("endtime").value);
             var id_container = "avgmonthly_content";
-            
+
             if(document.getElementById("removeOutliers").checked == true){
                 var removeOutliers = "True";
             }else{
                 var removeOutliers = "False";
             };
-            
+
             if(document.getElementById("fillingData").checked == true){
                 var fillingData = "True";
             }else{
                 var fillingData = "False";
             };
 
-            
+
             if(document.getElementById('linear_regression').checked == true){
                 var linear_regression = "True";
             }else{
@@ -242,7 +245,7 @@ $(document).ready(function () {
                 },
                 complete: function() {
                 $("#spinner").hide();
-                },  
+                },
                 success: function (data) {
                     $(document.getElementById(id_container)).append(data)
                 },
@@ -255,7 +258,7 @@ $(document).ready(function () {
                 }
             });
         }else if($that.closest("#outlierAnalysis")[0]){
-            
+
             $("#spinner").show();
             var id = String(document.getElementById("id").value);
             var varibale = String(document.getElementById("variable").value);
@@ -263,7 +266,7 @@ $(document).ready(function () {
             var end_time = String(document.getElementById("endtime").value);
             var outliersDetectionMethod = String($(document.getElementById("outliersDetectionMethod")).val());;
             var id_container = "oulierDectectionContent";
-            
+
             $.ajax({
                 async:true,
                 type: 'POST',
@@ -277,7 +280,7 @@ $(document).ready(function () {
                 },
                 complete: function() {
                 $("#spinner").hide();
-                },  
+                },
                 success: function (data) {
                     $(document.getElementById(id_container)).append(data)
                 },
@@ -288,8 +291,8 @@ $(document).ready(function () {
                 headers: {
                     'X-CSRFToken': csrftoken
                 }
-            });   
-            
+            });
+
         }else if($that.closest("#editOutliers")[0]){
             $("#spinner").show();
             var id = String(document.getElementById("id").value);
@@ -297,16 +300,16 @@ $(document).ready(function () {
             var datetime = [];
             var outlierValue = [];
             var editedValue = [];
-            
+
             var table = ($that.parent().parent()[0]).getElementsByClassName("ouliersTable")[0];
             var rows = table.rows;
-            
+
             for ( i = 1; i < table.rows.length; i++ ) {
                  datetime.push(rows[i].getElementsByClassName("datetime")[0].innerText);
                  outlierValue.push(rows[i].getElementsByClassName("outlierValue")[0].innerText);
                  editedValue.push(rows[i].getElementsByClassName("editedValue")[0].value);
               };
-            
+
             $.ajax({
                 async:true,
                 type: 'POST',
@@ -319,7 +322,7 @@ $(document).ready(function () {
                 },
                 complete: function() {
                 $("#spinner").hide();
-                },  
+                },
                 success: function (data) {
                     alert(data);
                     ($that.parent().parent().parent().parent()).remove();
@@ -331,14 +334,14 @@ $(document).ready(function () {
                 headers: {
                     'X-CSRFToken': csrftoken
                 }
-            });   
-       
+            });
+
             $("#spinner").hide();
         }else if($that.closest(".removeAnalysis")[0]){
             ($that.parent().parent()).remove();
         }
-        
-        
+
+
         ;
     });
 

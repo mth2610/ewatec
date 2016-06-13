@@ -145,7 +145,6 @@ def delAllSitesData(dbConnection,sites):
             print isnt.args
     dbConnection.commit()
 
-
 def updateSeriesCatalog(dbConnection,df):
     dbCursor = dbConnection.cursor()
     numRows = (df.shape)[0]
@@ -168,7 +167,15 @@ def updateSeriesCatalog(dbConnection,df):
                      "BeginDateTimeUTC","EndDateTimeUTC","ValueCount",
                      "UploadUser","Public"]
 
-    upTemplate = updateTemplate('dbo."SeriesCatalog"',updateColumns,list(df.columns.values))
+
+    whereConsCols = list(df.columns.values)
+    whereConsCols.remove('UTCOffset')
+    whereConsCols.remove('CensorCode')
+    upTemplate = updateTemplate('dbo."SeriesCatalog"',
+                                updateColumns,
+                                whereConsCols)
+
+
     inTemplate = insertTemplate('dbo."SeriesCatalog"',insertColumns)
 
     ## get lookup table
@@ -182,7 +189,7 @@ def updateSeriesCatalog(dbConnection,df):
                                                        "TimeSupport","TimeUnitsID","DataType",
                                                        "GeneralCategory"])
 
-    #Create MethodDesciption, MethodID libary
+    # Create MethodDesciption, MethodID libary
     methodLib = createLookupTable(dbCursor,'dbo."Methods"','MethodDescription','MethodID')
 
     # Create UnitID, UnitName libary
@@ -219,8 +226,12 @@ def updateSeriesCatalog(dbConnection,df):
                                                            rowData['Public']])
         try:
             ## Update
-            dbCursor.execute(updateTemplate,(minDatetime,maxDateTime,
-                                             minUTCDatetime,maxUTCDateTime,numData)+tuple(rowData))
+            tupledata = (minDatetime,maxDateTime,minUTCDatetime,
+                         maxUTCDateTime,numData,rowData["SiteCode"],
+                         rowData["VariableCode"],rowData["SourceID"],
+                         rowData["QualityControlLevelID"],rowData["MethodDescription"],rowData["UploadUser"],
+                         rowData["Public"])
+            dbCursor.execute(upTemplate,tupledata)
         except Exception as inst:
             ## Insert
             dbCursor.execute(inTemplate,(siteLib[rowData["SiteCode"]]["SiteID"],
@@ -260,7 +271,6 @@ def updateSeriesCatalog(dbConnection,df):
 
         ## commit and close
         dbConnection.commit()
-        dbConnection.close()
 
 def getDataValue(dbConnection,siteID,variableID,
                  minDateTime,maxDateTime,requestUser='admin',
@@ -536,5 +546,5 @@ class DataValues():
                                       'CensorCode','SourceID','QualityControlLevelID',
                                       'MethodDescription','UploadUser','Public'])).mean().reset_index()
         groupDataValueObj = groupDataValueObj.drop('DataValue',1)
-        updateSeriesCatalog(dbConnection,groupDataValueObj)
         dbConnection.commit()
+        updateSeriesCatalog(dbConnection,groupDataValueObj)

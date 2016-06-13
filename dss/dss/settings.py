@@ -23,8 +23,6 @@ SECRET_KEY = '1*$n_z@^jn^r!wu#dc0@#lyao7z)bs6moe1dpx1iv@t=k3fc*q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
 
@@ -66,20 +64,39 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages"
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # 'DIRS': [],
+        'APP_DIRS': True,
+        # 'DEBUG': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.i18n',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
+                'django.core.context_processors.tz',
+            ],
+        },
+    },
 ]
 
-TEMPLATE_LOADERS =[
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader'
-]
+# TEMPLATE_CONTEXT_PROCESSORS = [,
+#     "django.core.context_processors.i18n",
+#     "django.core.context_processors.media",
+#     "django.core.context_processors.static",
+#     "django.core.context_processors.tz",
+# ]
+#
+# TEMPLATE_LOADERS =[
+#     'django.template.loaders.filesystem.Loader',
+#     'django.template.loaders.app_directories.Loader'
+# ]
 
 ROOT_URLCONF = 'dss.urls'
 WSGI_APPLICATION = 'dss.wsgi.application'
@@ -99,7 +116,7 @@ DATABASES = {
     }
 }
 
-POSTGIS_VERSION = ( 2, 1, 4 )
+## POSTGIS_VERSION = ( 2, 1, 4 )
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -125,7 +142,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 STATICFILES_DIRS = (
     ('assets',os.path.join(BASE_DIR, 'static')),
 )
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
+
 
 ##
 #ENV_PATH = os.path.abspath(os.path.dirname(__file__))

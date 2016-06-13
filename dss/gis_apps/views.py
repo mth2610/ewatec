@@ -254,13 +254,14 @@ def data_review(request):
 
         id_name_list = zip(id_list,name_list)
 
+        args.update(csrf(request))
         args['id_name_list'] = id_name_list
         args['name_list'] = name_list
         args['id_list'] = id_list
         args['data_dict'] = data_dict
 
 
-        return render_to_response('data-review.html',args,context_instance=RequestContext(request))
+        return render(request,'data-review.html',args,content_type='application/xhtml+xml')
     else:
         url = "/auth/require_login"
         return HttpResponse(url)
@@ -276,6 +277,7 @@ def data_download(request):
         selected_variable = request.POST.getlist('selected_variable[]',[0,0,0,0])
         selected_starttime = request.POST.getlist('selected_starttime[]',[0,0,0,0])
         selected_endtime = request.POST.getlist('selected_endtime[]',[0,0,0,0])
+
         dbConnection = connection
         dbCursor = dbConnection.cursor()
 
@@ -355,6 +357,7 @@ def show_graph(request):
     variable_unit = variable.fetchall()
     variable_type = variable_unit[0][0].rstrip()
     unitid = variable_unit[0][1]
+
     if variable_type == "Average":
         VariableType = 'mean'
     else:
@@ -367,12 +370,13 @@ def show_graph(request):
     unitname = unitname.fetchall()[0][0].rstrip()
 
 ##----------------------------------------------------------**----------------------------------------------------------##
-
-    img = serial_statistics.graph_in_endcode64(data,selected_variable.rstrip(),unitname,linear_regression = False)
-
+    img = serial_statistics.graph_in_endcode64(data,selected_variable.rstrip(),
+                                               unitname,
+                                               linear_regression = False)
 
     # Set statistical parameters
     args = {}
+    args.update(csrf(request))
     datavalue = list(data['Value'])
     args['standard_deviation'] = str(np.nanstd(datavalue))
     args['mean'] = str(np.nanmean(datavalue))
@@ -386,9 +390,9 @@ def show_graph(request):
     args['endtime'] = selected_endtime
     args['img'] = img
     args['timestep'] = "raw"
-    print "test5"
 
-    return render_to_response('blank_statistic.html',RequestContext(request,args))
+    ##return render_to_response('blank_statistic.html',RequestContext(request,args))
+    return render(request,'blank_statistic.html',args, content_type='application/xhtml+xml')
 
 @csrf_exempt
 @login_required(login_url="/auth/require_login")
@@ -415,90 +419,59 @@ def resample_data(request):
         linear_regression = False
 
     ## Get the data
-    connection = psycopg2.connect(dbname=dbname, user=user, password=password, host = host, port = port)
-    connection.commit()
-    variable_dictonary = {}
-    variable_data = connection.cursor()
-    variable_data.execute('SELECT "VariableName","VariableID" FROM dbo."Variables"')
-    connection.commit()
-    variable_data = variable_data.fetchall()
-    for element in variable_data:
-        variable_dictonary.update({(element[0]).rstrip():element[1]})
+    # Create VariableCode, VariableID libary
+    dbConnection = connection
+    dbCursor = dbConnection.cursor()
+    variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
 
-    data = connection.cursor()
+    data = ODM.getDataValue(dbConnection,int(selected_id),
+                            variableLib[selected_variable.rstrip().replace('-',' ')],
+                            selected_starttime,selected_endtime,
+                            requestUser='admin',timeZone='LocalDateTime',dateTimeFormat='%Y-%m-%d %H:%M:%S')
 
+    # Replace -9999 by np.nan
+    data = data.replace(-9999,np.nan)
 
-    data_str = 'SELECT "LocalDateTime","DataValue" FROM dbo."DataValues" WHERE "SiteID" = '\
-                 +str(int(selected_id)) + ' AND "VariableID" = '\
-                 +str(variable_dictonary[(selected_variable).rstrip()])\
-                 + ' AND "LocalDateTime" >='\
-                 + "'"+str(selected_starttime)+"'"\
-                 + ' AND "LocalDateTime" <= '\
-                 + "'"+str(selected_endtime) + "'"\
-				 + ' ORDER BY "LocalDateTime"'
-
-    data.execute(data_str)
-    connection.commit()
-    data = data.fetchall()
+    # Remove outliers before do stuffs
+    if remove_outliers_choices == True:
+        data['Value'] = serial_statistics.reject_outliers(data['Value'])
 
 ##----------------------------------------------------------**----------------------------------------------------------##
 # Look for variable type and unit
-    variable = connection.cursor()
+    variable = dbConnection.cursor()
     variable_str = 'SELECT "DataType", "VariableUnitsID" FROM dbo."Variables" WHERE "VariableName" = '+"'"+str((selected_variable).rstrip())+"'"
     variable.execute(variable_str)
-    connection.commit()
+    dbConnection.commit()
 
     variable_unit = variable.fetchall()
     variable_type = variable_unit[0][0].rstrip()
     unitid = variable_unit[0][1]
-
     if variable_type == "Average":
         VariableType = 'mean'
     else:
         VariableType = 'sum'
 
-    unitname = connection.cursor()
+    unitname = dbConnection.cursor()
     unitname_str = 'SELECT "UnitsName" FROM dbo."Units" WHERE "UnitsID" = ' + str(unitid)
     unitname.execute(unitname_str)
-    connection.commit()
+    dbConnection.commit()
     unitname = unitname.fetchall()[0][0].rstrip()
 
 ##----------------------------------------------------------**----------------------------------------------------------##
-
-    t = []
-    value = []
-
-
-
-    for element in data:
-        t.append(element[0])
-        value.append(element[1])
-
-
-
-
-    for i in range(len(value)):
-        if float(value[i]) == -9999:
-            value[i] = np.nan
-
-    if remove_outliers_choices == True:
-        value = serial_statistics.reject_outliers(value)
-
     if str(time_step) != "raw":
-        data_object = serial_statistics.serial_statistics(t,value,VariableType)
+        data_object = serial_statistics.serial_statistics(list(data.index),data['Value'],VariableType)
         resample_data = data_object.resample_data(time_step,fillingData=fillingData)
         graph_img = serial_statistics.graph_in_endcode64(resample_data,
                                                          variable=selected_variable.rstrip(), unit=unitname,
                                                          title="",linear_regression=linear_regression)
         value = resample_data.values
     else:
-        data_object = serial_statistics.serial_statistics(t,value,VariableType)
+        data_object = serial_statistics.serial_statistics(list(data.index),data['Value'],VariableType)
         graph_img = serial_statistics.graph_in_endcode64(data_object.DF,
                                                          variable=selected_variable.rstrip(), unit=unitname,
                                                          title="", linear_regression=linear_regression)
+        value = list(data['Value'])
 
-
-    connection.close()
     args = {}
     args['img'] = graph_img
     args['standard_deviation'] = str(np.nanstd(value))
@@ -538,31 +511,23 @@ def histogram_statistics(request):
     else:
         linear_regression = False
 
-    connection = psycopg2.connect(dbname=dbname, user=user, password=password, host = host, port = port)
-    connection.commit()
-    variable_dictonary = {}
-    variable_data = connection.cursor()
-    variable_data.execute('SELECT "VariableName","VariableID" FROM dbo."Variables"')
-    connection.commit()
-    variable_data = variable_data.fetchall()
-    for element in variable_data:
-        variable_dictonary.update({(element[0]).rstrip():element[1]})
+    ## Get the data
+    # Create VariableCode, VariableID libary
+    dbConnection = connection
+    dbCursor = dbConnection.cursor()
+    variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
 
-    data = connection.cursor()
+    data = ODM.getDataValue(dbConnection,int(selected_id),
+                            variableLib[selected_variable.rstrip().replace('-',' ')],
+                            selected_starttime,selected_endtime,
+                            requestUser='admin',timeZone='LocalDateTime',dateTimeFormat='%Y-%m-%d %H:%M:%S')
 
+    # Replace -9999 by np.nan
+    data = data.replace(-9999,np.nan)
 
-    data_str = 'SELECT "LocalDateTime","DataValue" FROM dbo."DataValues" WHERE "SiteID" = '\
-                 +str(int(selected_id)) + ' AND "VariableID" = '\
-                 +str(variable_dictonary[(selected_variable).rstrip()])\
-                 + ' AND "LocalDateTime" >='\
-                 + "'"+str(selected_starttime)+"'"\
-                 + ' AND "LocalDateTime" <= '\
-                 + "'"+str(selected_endtime) + "'"\
-				 + ' ORDER BY "LocalDateTime"'
-
-    data.execute(data_str)
-    connection.commit()
-    data = data.fetchall()
+    # Remove outliers before do stuffs
+    if remove_outliers_choices == True:
+        data['Value'] = serial_statistics.reject_outliers(data['Value'])
 
 ##----------------------------------------------------------**----------------------------------------------------------##
 # Look for variable type and unit
@@ -587,28 +552,10 @@ def histogram_statistics(request):
     unitname = unitname.fetchall()[0][0].rstrip()
 
 ##----------------------------------------------------------**----------------------------------------------------------##
-    t = []
-    value = []
 
-
-    for element in data:
-        t.append(element[0])
-        value.append(element[1])
-
-
-    for i in range(len(value)):
-        if float(value[i]) == -9999:
-            value[i] = np.nan
-
-
-    #    remove outliers
-    if remove_outliers_choices == True:
-        value = serial_statistics.reject_outliers(value)
-
-
-    data_object = serial_statistics.serial_statistics(t,value)
-
+    data_object = serial_statistics.serial_statistics(data.index,list(data['Value']))
     graph_img = data_object.histogram(selected_variable.rstrip(),unitname)
+    value = list(data['Value'])
 
     args = {}
     args['img'] = graph_img
@@ -645,29 +592,24 @@ def averagemonthly_statistics(request):
         linear_regression = False
 
 
-    connection = psycopg2.connect(dbname=dbname, user=user, password=password, host = host, port = port)
-    connection.commit()
-    variable_dictonary = {}
-    variable_data = connection.cursor()
-    variable_data.execute('SELECT "VariableName","VariableID" FROM dbo."Variables"')
-    connection.commit()
-    variable_data = variable_data.fetchall()
-    for element in variable_data:
-        variable_dictonary.update({(element[0]).rstrip():element[1]})
+    ## Get the data
+    # Create VariableCode, VariableID libary
+    dbConnection = connection
+    dbCursor = dbConnection.cursor()
+    variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
 
-    data = connection.cursor()
-    data_str = 'SELECT "LocalDateTime","DataValue" FROM dbo."DataValues" WHERE "SiteID" = '\
-                 +str(int(selected_id)) + ' AND "VariableID" = '\
-                 +str(variable_dictonary[(selected_variable).rstrip()])\
-                 + ' AND "LocalDateTime" >='\
-                 + "'"+str(selected_starttime)+"'"\
-                 + ' AND "LocalDateTime" <= '\
-                 + "'"+str(selected_endtime) + "'"\
-				 + ' ORDER BY "LocalDateTime"'
+    data = ODM.getDataValue(dbConnection,int(selected_id),
+                            variableLib[selected_variable.rstrip().replace('-',' ')],
+                            selected_starttime,selected_endtime,
+                            requestUser='admin',timeZone='LocalDateTime',dateTimeFormat='%Y-%m-%d %H:%M:%S')
 
-    data.execute(data_str)
-    connection.commit()
-    data = data.fetchall()
+    # Replace -9999 by np.nan
+    data = data.replace(-9999,np.nan)
+
+    # Remove outliers before do stuffs
+    if remove_outliers_choices == True:
+        data['Value'] = serial_statistics.reject_outliers(data['Value'])
+
 ##----------------------------------------------------------**----------------------------------------------------------##
 ##----------------------------------------------------------**----------------------------------------------------------##
 # Look for variable type and unit
@@ -691,44 +633,24 @@ def averagemonthly_statistics(request):
     connection.commit()
     unitname = unitname.fetchall()[0][0].rstrip()
 
-##----------------------------------------------------------**----------------------------------------------------------##
-
-##----------------------------------------------------------**----------------------------------------------------------##
-    t = []
-    value = []
-
-
-    for element in data:
-        t.append(element[0])
-        value.append(element[1])
-
-
-    for i in range(len(value)):
-        if float(value[i]) == -9999:
-            value[i] = np.nan
-##----------------------------------------------------------**--------------------------------------------------------
-#    remove outliers
-    if remove_outliers_choices == True:
-        value = serial_statistics.reject_outliers(value)
-##----------------------------------------------------------**----------------------------------------------------------##
 ## Resample data
     if VariableType == 'sum':
-        data_object = serial_statistics.serial_statistics(t,value,VariableType)
+        data_object = serial_statistics.serial_statistics(data.index,data['Value'],VariableType)
         resample_DF = (data_object.resample_data('M',fillingData)).values
-        t = (data_object.resample_data('M')).index.values
-        value = (data_object.resample_data('M')).values
+        resampled_datetime = (data_object.resample_data('M')).index.values
+        resampled_value = (data_object.resample_data('M')).values
     else:
         pass
 ##----------------------------------------------------------**----------------------------------------------------------##
-    data_object = serial_statistics.serial_statistics(t,value)
+    data_object = serial_statistics.serial_statistics(resampled_datetime,resampled_value)
     graph_img = data_object.averagemonthly_statistic(selected_variable.rstrip(),unitname)
 
     args = {}
     args['img'] = graph_img
-    args['standard_deviation'] = str(np.nanstd(value))
-    args['mean'] = str(np.nanmean(value))
-    args['min'] = str(np.nanmin(value))
-    args['max'] = str(np.nanmax(value))
+    args['standard_deviation'] = str(np.nanstd(resampled_value))
+    args['mean'] = str(np.nanmean(resampled_value))
+    args['min'] = str(np.nanmin(resampled_value))
+    args['max'] = str(np.nanmax(resampled_value))
 
     return render_to_response('other_blank_statistic.html',RequestContext(request,args))
 ##**********************************************************************************************************************##
@@ -745,48 +667,26 @@ def extract_data(request):
         remove_outliers_choices = request.POST.get('removeOutliers')
         fillingData = request.POST.get('fillingData')
 
-        print remove_outliers_choices
-        print fillingData
+        dbConnection = connection
+        dbCursor = dbConnection.cursor()
 
-        connection = psycopg2.connect(dbname=dbname, user=user, password=password, host = host, port = port)
-        connection.commit()
+        # Create SiteCode, SiteName
+        siteLib = ODM.createLookupTable(dbCursor,'dbo."Sites"','SiteID','SiteName')
 
-        ## Create variable_dictonary
-        variable_dictonary = {}
-        variable_data = connection.cursor()
-        variable_data.execute('SELECT "VariableName","VariableID" FROM dbo."Variables"')
-        connection.commit()
-        variable_data = variable_data.fetchall()
-        for element in variable_data:
-            variable_dictonary.update({(element[0]).rstrip():element[1]})
+        # Create VariableCode, VariableID libary
+        variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
 
-        ## Create SiteID, SiteName libary
+        data = ODM.getDataValue(dbConnection,int(selected_id),
+                                variableLib[selected_variable.rstrip().replace('-',' ')],
+                                selected_starttime,selected_endtime,
+                                requestUser='admin',timeZone='LocalDateTime',dateTimeFormat='%Y-%m-%d %H:%M:%S')
+            # Replace -9999 by np.nan
+        data = data.replace(-9999,np.nan)
 
-        SiteID_SiteName_lib = {}
-        SiteID_SiteName = connection.cursor()
-        SiteID_SiteName.execute('SELECT "SiteID", "SiteName" FROM dbo."Sites"')
-        connection.commit()
-        SiteID_SiteName = SiteID_SiteName.fetchall()
+        # Remove outliers before do stuffs
+        if remove_outliers_choices == True:
+            data['Value'] = serial_statistics.reject_outliers(data['Value'])
 
-        for element in SiteID_SiteName:
-            SiteID_SiteName_lib.update({element[0]:(element[1]).rstrip()})
-
-
-        ## Select data
-        data = connection.cursor()
-        data_str = 'SELECT "LocalDateTime","DataValue" FROM dbo."DataValues" WHERE "SiteID" = '\
-                     +str(int(selected_id)) + ' AND "VariableID" = '\
-                     +str(variable_dictonary[(selected_variable).rstrip()])\
-                     + ' AND "LocalDateTime" >='\
-                     + "'"+str(selected_starttime)+"'"\
-                     + ' AND "LocalDateTime" <= '\
-                     + "'"+str(selected_endtime) + "'"\
-                     + ' ORDER BY "LocalDateTime"'
-
-        data.execute(data_str)
-        connection.commit()
-        data = data.fetchall()
-    ##----------------------------------------------------------**----------------------------------------------------------##
     # Look for variable type
         variable = connection.cursor()
         variable_str = 'SELECT "DataType" FROM dbo."Variables" WHERE "VariableName" = '+"'"+str((selected_variable).rstrip())+"'"
@@ -798,38 +698,15 @@ def extract_data(request):
             VariableType = 'mean'
         else:
             VariableType = 'sum'
-    ##----------------------------------------------------------**----------------------------------------------------------##
-        t = []
-        value = []
-
-
-
-        for element in data:
-            t.append(element[0])
-            value.append(element[1])
-
-
-        for i in range(len(value)):
-            if float(value[i]) == -9999:
-                value[i] = np.nan
-    ##----------------------------------------------------------**--------------------------------------------------------
-    #    remove outliers
-        if remove_outliers_choices == "True":
-            value = serial_statistics.reject_outliers(value)
-
-
-
-    ##----------------------------------------------------------**----------------------------------------------------------##
 
     ## Resample data
-        print "test1***"
         if time_step!= "raw":
-            data_object = serial_statistics.serial_statistics(t,value,VariableType)
+            data_object = serial_statistics.serial_statistics(data.index,data['Value'],VariableType)
             resample_data = data_object.resample_data(time_step,fillingData = fillingData)
             datetime = resample_data.index
             value = resample_data.values
         else:
-            data_object = pd.Series(value,t)
+            data_object = pd.Series(data['Value'],data.index)
             if fillingData == True or fillingData == "True":
                 data_object = data_object.fillna(method='pad')
             else:
@@ -861,13 +738,13 @@ def extract_data(request):
 
         data = zip(t,value)
 
-        csv_filename = str(selected_id)+"_"+str(SiteID_SiteName_lib[int(selected_id)])+"_"+str(selected_variable.rstrip())+"_"+str(selected_starttime)+"_"+str(selected_endtime)+'.csv'
+        csv_filename = str(selected_id)+"_"+str(siteLib[int(selected_id)])+"_"+str(selected_variable.rstrip())+"_"+str(selected_starttime)+"_"+str(selected_endtime)+'.csv'
 
 
         csv_out = StringIO.StringIO()
         #         create the csv writer object.
         mywriter = csv.writer(csv_out)
-        mywriter.writerow(["Date","Value"])
+        mywriter.writerow(["DateTime","Value"])
         for row in data:
             mywriter.writerow([row[0], row[1]])
 
@@ -1388,9 +1265,7 @@ def get_data(id_list,varibale_list,starttime_list,endtime_list):
     return variable_header,variable_type, final_data, unitname, unit_abbr, SiteID_LatLong_lib, varibalename_variablecode_dict, SiteID_SiteName_lib
 
 
-@login_required(login_url="/auth/require_login")
 def upload_model_file(request):
-
     return render_to_response('upload_modeled_file.html',context_instance=RequestContext(request))
 
 
@@ -2142,7 +2017,6 @@ def multiLinearRegression(request):
     csv_out = open(FILE_DIR, 'wb')
     ## create the csv writer object.
     mywriter = csv.writer(csv_out)
-    ##print Result
     mywriter.writerow(["DateTime","Values"])
 
     for row in zip([(pd.to_datetime(e)).strftime("%Y-%m-%d %H:%M:%S") for e in mulvariate_obj.index],predictedValues):

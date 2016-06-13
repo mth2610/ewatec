@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 {% load return_item %}
 
 
@@ -8,7 +8,8 @@
 
         <thead >
             <tr >
-                <th >Station/Parameters</th>
+                <th >Stations</th>
+                <th >Parameters</th>
                 <th>From</th>
                 <th>To</th>
                 <th class="removeoutlier">Remove Outlier</th>
@@ -20,44 +21,35 @@
 
         <tbody>
             {% for id, name in id_name_list %}
-            
-            <tr>
-                <td class="SiteId" colspan="5" id={{id}}><b>{{name}}</b></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+                {% for data in data_dict|return_item:id %}
+                <tr>
+                    <td class= "{{data.0}}" id = {{id}} >{{name}}</td>
+                    <td class= "{{data.0}}" id = {{ "Variable_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} >{{data.0}}</td>
+                    <td class="starttime">
+                        <input type="text" id = {{ "Starttime_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} value="{{data.1}}" >
+                    </td>
+                    <td class="endtime" >
+                        <input type="text" id = {{ "Endtime_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} value="{{data.2}}">
+                    </td>
 
-            {% for data in data_dict|return_item:id %}
-            <tr>
-                <td class= "{{data.0}}" id = {{ "Variable_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} >{{data.0}}</td>
-                <td class="starttime">
-                    <input type="text" id = {{ "Starttime_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} value="{{data.1}}" >
-                </td>
-                <td class="endtime" >
-                    <input type="text" id = {{ "Endtime_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} value="{{data.2}}">
-                </td>
-                
-                <td class="removeoutlier">
-                    <input type="checkbox" class="ck_removeoutlier" id = {{ "Removeoutlier_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} onclick="">
-                </td>
-                
-                <td class="fillingdata">
-                    <input type="checkbox" class="ck_fillingdata" id = {{ "Fillingdata"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} onclick="">
-                </td>
-                
-                <td class="check">
-                    <input type="checkbox" class="ck_download" sitename = "{{name}}" id = {{ "Check_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} onclick="">
-                </td>
+                    <td class="removeoutlier">
+                        <input type="checkbox" class="ck_removeoutlier" id = {{ "Removeoutlier_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} onclick="">
+                    </td>
 
-                <td class="graph">
-                    <span class="button small fa fa-bar-chart" title="Graph" id = {{ "Graph_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}}> </span>
-                </td>
-            </tr>
+                    <td class="fillingdata">
+                        <input type="checkbox" class="ck_fillingdata" id = {{ "Fillingdata"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} onclick="">
+                    </td>
 
-            {% endfor %} 
+                    <td class="check">
+                        <input type="checkbox" class="ck_download" sitename = "{{name}}" id = {{ "Check_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}} onclick="">
+                    </td>
+
+                    <td class="graph">
+                        <span class="button small fa fa-bar-chart" title="Graph" id = {{ "Graph_"|add:id|stringformat:"s_"|add:data.0|stringformat:"s"}}> </span>
+                    </td>
+                </tr>
+
+                {% endfor %}
             {% endfor %}
         </tbody>
     </table>

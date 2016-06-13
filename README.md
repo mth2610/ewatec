@@ -11,6 +11,12 @@ $ wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key
 $ sudo apt-get update
 $ sudo apt-get install postgresql postgresql-contrib
 ```
+### Install postgis
+```
+sudo apt-add-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt-get update
+sudo apt-get install postgis
+```
 ### Connect to PostgreSQL
 ```
 $ sudo su - postgres

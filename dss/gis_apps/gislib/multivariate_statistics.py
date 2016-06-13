@@ -22,24 +22,24 @@ def multipleBoxPlot(DF, variable = "", unit = ""):
     meds = DF.median()
     meds.sort(ascending=False)
     DF = DF[meds.index]
-    
+
     columns = DF.columns
     figure = plt.figure(figsize=(20, 15))
     figure.patch.set_facecolor('white')
-    
+
     for column in columns:
         plt.boxplot(DF[columns].values)
 
-    
+
     xticks(range(1,len(columns) + 1),columns, rotation=90)
 
-    
+
     if variable != "" and unit != "":
         ylabel(variable + " (" + unit + ")")
     else:
         pass
-    
-    
+
+
     # Store image in a string buffer
     buffer = StringIO.StringIO()
     canvas = pylab.get_current_fig_manager().canvas
@@ -57,7 +57,7 @@ def scatterplot_matrix(data, names, **kwargs):
     passed on to matplotlib's "plot" command. Returns the matplotlib figure
     object containg the subplot grid."""
     numvars, numdata = data.shape
-    
+
     fig, axes = plt.subplots(nrows=numvars, ncols=numvars, figsize=(8,8))
     fig.subplots_adjust(hspace=0.05, wspace=0.05)
 
@@ -75,33 +75,33 @@ def scatterplot_matrix(data, names, **kwargs):
             ax.xaxis.set_ticks_position('top')
         if ax.is_last_row():
             ax.xaxis.set_ticks_position('bottom')
-    
-    
+
+
     # Label the diagonal subplots...
     for i, label in enumerate(names):
         n, bins, patches = axes[i,i].hist((data[i])[~np.isnan(data[i])], normed=1, facecolor='blue', alpha = 0.5)
         axes[i,i].annotate(label, (0.5, 0.9), xycoords='axes fraction',
                 ha='center', va='center',size = 15)
-        
+
     # Plot the data.
     for i, j in zip(*np.triu_indices_from(axes, k=1)):
         for x, y in [(j,i)]:
-            
+
             axes[x,y].scatter(data[y], data[x], **kwargs)
-            
-            if x == (numvars - 1):   
+
+            if x == (numvars - 1):
                 axes[x,y].xaxis.set_visible(True)
                 axes[x,y].xaxis.set_major_locator(MaxNLocator(4))
-            
+
             if y == 0:
                 axes[x,y].yaxis.set_visible(True)
                 axes[x,y].yaxis.set_major_locator(MaxNLocator(4))
-            
-            
+
+
             pearson_correlation = st.pearsonr(data[y],data[x])
             axes[y,x].annotate("%.3f" %pearson_correlation[0], (0.5, 0.5), xycoords='axes fraction',
                 ha='center', va='center',size = 30*np.sqrt(pearson_correlation[0]**2))
-            
+
             if pearson_correlation[1] <= 0.001:
                 axes[y,x].annotate("***", (0.8, 0.8), xycoords='axes fraction',
                     ha='center', va='center',size = 20, color = "red")
@@ -116,7 +116,7 @@ def scatterplot_matrix(data, names, **kwargs):
                     ha='center', va='center',size = 20, color = "red")
             else:
                 pass
-    
+
 #     Turn on the proper x or y axes ticks.
 
     axes[0,0].yaxis.set_visible(True)
@@ -125,27 +125,27 @@ def scatterplot_matrix(data, names, **kwargs):
     axes[-1,-1].xaxis.set_major_locator(MaxNLocator(4))
 #    axes[-1,-1].yaxis.set_visible(True)
 #    axes[-1,-1].yaxis.set_major_locator(MaxNLocator(4))
-    
+
 #    for i, j in zip(range(numvars), itertools.cycle((-1, 0))):
-#        
-#        
+#
+#
 #        if (i,j) in zip(*np.triu_indices_from(axes, k=1)):
-#            pass 
+#            pass
 #        else:
 #            axes[j,i].xaxis.set_visible(True)
 #            axes[j,i].xaxis.set_major_locator(MaxNLocator(4))
 #            axes[i,j].yaxis.set_visible(True)
 #            axes[j,i].yaxis.set_major_locator(MaxNLocator(5))
-#            
-    
-    
+#
+
+
     return fig
 
 
 class general_statistic():
     def __init__(self,DF):
         self.DF = DF
-        
+
     def multi_timeserise_plot(self):
         DF = self.DF
         datetime = np.array(DF.index.values)
@@ -173,25 +173,25 @@ class general_statistic():
                         setp(subplot.get_xticklabels(), visible=False)
             except Exception as inst:
                 pass
-                
+
             i = i + 1
 
-        
+
         # Store image in a string buffer
-            
+
         buffer = StringIO.StringIO()
         canvas = pylab.get_current_fig_manager().canvas
         canvas.draw()
         pilImage = PIL.Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
         pilImage.save(buffer, "PNG")
         pylab.close()
-        img = str((buffer.getvalue()).encode('Base64'))      
-        
+        img = str((buffer.getvalue()).encode('Base64'))
+
         return img
-    
+
     def scatter_plot(self):
         DF = self.DF
-        
+
         DF = DF.dropna()
         data = (DF.as_matrix()).T
         variable = list(DF.keys())
@@ -200,7 +200,7 @@ class general_statistic():
         figuge.set_facecolor('white')
 #        figure.patch.set_facecolor('white')
         # Store image in a string buffer
-        
+
         buffer = StringIO.StringIO()
         canvas = pylab.get_current_fig_manager().canvas
         canvas.draw()
@@ -208,9 +208,9 @@ class general_statistic():
         pilImage.save(buffer, "PNG")
         pylab.close()
         img = str((buffer.getvalue()).encode('Base64'))
-        
+
         return img
-    
+
 class LinearRegression(object):
     def __init__(self,df,dependentVariable):
         import statsmodels.api as sm
@@ -226,27 +226,25 @@ class LinearRegression(object):
 
     def getX(self):
         return self.X
-    
+
     def getY(self):
         return self.Y
-    
+
     def predictedValues(self):
         """
         return a list of predicted value for dependent variable
-        """        
+        """
         return (self.regressionModel).predict(self.getX())
-    
+
     def predictedPlot(self,variable="",unit="", title = ""):
         """
         return image of predictedPlot
-        """   
-        print variable
+        """
         return serial_statistics.graph_in_endcode64(pandas.DataFrame({self.dependentVariable:self.predictedValues()},index = self.index), variable=variable,unit=unit,title = title, linear_regression = False)
-    
+
     def parametersSumary(self):
         """
-        return a dictonary of parameters 
+        return a dictonary of parameters
         """
-        
+
         return self.regressionModel.summary
-        
