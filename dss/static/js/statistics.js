@@ -19,7 +19,7 @@ $(document).ready(function () {
     var csrftoken = getCookie('csrftoken');
 
     $('.datetimepicker').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
-    
+
 
     $(document).click(function (e) {
         var $that = $(e.target);
@@ -32,7 +32,6 @@ $(document).ready(function () {
             var start_time = document.getElementById("starttime").value;
             var end_time = document.getElementById("endtime").value;
             var timstep = ($that.closest("#extract_data")[0]).getAttribute("timestep");
-
             if(document.getElementById("removeOutliers").checked === true){
                 var removeOutliers = "True";
             }else{
@@ -81,6 +80,7 @@ $(document).ready(function () {
             var varibale = String(document.getElementById("variable").value);
             var start_time = String(document.getElementById("starttime").value);
             var end_time = String(document.getElementById("endtime").value);
+
             var id_container;
 
             if(document.getElementById("removeOutliers").checked == true){
@@ -99,6 +99,12 @@ $(document).ready(function () {
                 var linear_regression = "True";
             }else{
                 var linear_regression = "False";
+            };
+
+            if(document.getElementById('interactiveGraph').checked == true){
+                var interactiveGraph = "True";
+            }else{
+                var interactiveGraph = "False";
             };
 
             if ($that.closest("#yearly_statistic")[0]) {
@@ -131,6 +137,7 @@ $(document).ready(function () {
                     'removeOutliers':removeOutliers,
                     'fillingData':fillingData,
                     'linear_regression':linear_regression,
+                    'interactiveGraph':interactiveGraph
                 },
                 complete: function() {
                 $("#spinner").hide();

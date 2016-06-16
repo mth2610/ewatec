@@ -7,6 +7,7 @@ import datetime
 import ogr, osr
 import pandas
 import pytz
+from django.db import IntegrityError
 
 def newRstrip(data):
     try:
@@ -51,7 +52,7 @@ def insertTemplate(table,columns, returning = None):
 def updateTemplate(table,setCols,whereCols):
     numSetCols = len(setCols)
     numWhereCols = len(whereCols)
-    setValues = ' AND '.join([ '"'+e+'"' +'=%s'for e in setCols])
+    setValues = ' , '.join([ '"'+e+'"' +'=%s'for e in setCols])
     whereValues = ' AND '.join([ '"'+e+'"' +'=%s'for e in whereCols])
     template = 'UPDATE %s SET '%(table) + setValues + ' WHERE ' + whereValues
     return template
@@ -233,6 +234,8 @@ def updateSeriesCatalog(dbConnection,df):
                          rowData["Public"])
             dbCursor.execute(upTemplate,tupledata)
         except Exception as inst:
+            print inst
+            print type(inst)
             ## Insert
             dbCursor.execute(inTemplate,(siteLib[rowData["SiteCode"]]["SiteID"],
                                          rowData["SiteCode"],
@@ -465,7 +468,12 @@ class DataValues():
         dataValuesObj.loc[(dataValuesObj["QualityControlLevelID"]).isnull(),"QualityControlLevelID"] = int(-9999)
         dataValuesObj.loc[(dataValuesObj["CensorCode"]).isnull(),"CensorCode"] = 'nc'
         dataValuesObj = dataValuesObj.where((pandas.notnull(dataValuesObj)), None)
-        dataValuesObj['LocalDateTime'] = pandas.to_datetime(dataValuesObj['LocalDateTime'], format=datetimeFormat)
+
+        try:
+            dataValuesObj['LocalDateTime'] = pandas.to_datetime(dataValuesObj['LocalDateTime'], format=datetimeFormat)
+        except Exception as e:
+            raise Exception(e.message)
+
         self.dataValuesObj = dataValuesObj
         self.dataTimeZone = pytz.timezone('Asia/Ho_Chi_Minh')
         self.dbConnection = dbConnection
@@ -522,7 +530,8 @@ class DataValues():
                                                           datavaluesObj["UploadUser"][i],
                                                           datavaluesObj["Public"][i]))
 
-            except Exception as inst:
+            ## Try to catch duplicated data error
+            except IntegrityError as e:
                 dbConnection.rollback()
                 if datavaluesObj["DataValue"][i] != -9999:
                     dbCursor.execute(datValuesUpdateTemplate,(datavaluesObj["DataValue"][i],
@@ -538,8 +547,12 @@ class DataValues():
                                                               datavaluesObj["UploadUser"][i],
                                                               datavaluesObj["Public"][i]
                                                               ))
-            except Exception as inst:
-                break
+                else:
+                    pass
+            except Exception as e:
+                print e
+                raise Exception('Your file have uncorrect formatted data at row %s'%(i+1))
+
 
         ## Update serialCatalog
         groupDataValueObj = (datavaluesObj.groupby(['UTCOffset','SiteCode','VariableCode',

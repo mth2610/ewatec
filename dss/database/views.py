@@ -84,6 +84,8 @@ def confirm_upload(request):
     USER_NAME = request.user.username
     fileName = str((request.FILES['upload_file']).name)
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files/')+fileName
+    print type(request.FILES['upload_file'])
+    print pandas.read_csv(request.FILES['upload_file'])
 
     if os.path.exists(FILE_DIR):
         os.remove(FILE_DIR)
@@ -173,16 +175,49 @@ def save_sites(request):
         dbConnection.close()
         return render_to_response('error_import.html',context_instance=RequestContext(request))
 
-
+@csrf_exempt
 @login_required(login_url="/auth/require_login")
 def save_datavalues(request):
     USER_NAME = request.user.username
     FILE_DIR = os.path.join(BASE_DIR, 'media/user/'+USER_NAME+"/"+'temporary_files')
+    print type(request.FILES['upload_file'])
+    importData = request.FILES['upload_file']
     dbConnection = connection
-    dataValuesObj = ODM.DataValues(FILE_DIR+'/datavalues.csv',dbConnection)
-    dataValuesObj.importData()
-    dbConnection.close()
-    return render_to_response('successfull_import.html',context_instance=RequestContext(request))
+    datetimeFormat = str(request.POST['datetimeFormat'])
+    dataTimeZone =  str(request.POST['timezone'])
+    public = str(request.POST['public'])
+
+    if public.lower() == 'yes':
+        public = 'TRUE'
+    else:
+        public = 'FALSE'
+
+    if request.user.is_staff:
+        uploadUser = 'admin'
+    else:
+        uploadUser = USER_NAME
+
+    try:
+        dataValuesObj = ODM.DataValues(importData,
+                                       dbConnection,datetimeFormat=datetimeFormat,
+                                       dataTimeZone=dataTimeZone,
+                                       uploadUser=uploadUser,
+                                       public=public)
+    except Exception as e:
+        args = {}
+        args['error'] =  e.message
+        dbConnection.close()
+        return render_to_response('error_import.html',args,context_instance=RequestContext(request))
+
+    try:
+        dataValuesObj.importData()
+        dbConnection.close()
+        return render_to_response('successfull_import.html',context_instance=RequestContext(request))
+    except Exception as e:
+        args = {}
+        args['error'] =  e.message
+        dbConnection.close()
+        return render_to_response('error_import.html',args,context_instance=RequestContext(request))
 
 
 @csrf_exempt

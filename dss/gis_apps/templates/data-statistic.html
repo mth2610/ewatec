@@ -7,6 +7,10 @@
 <script src='{% static "/assets/js/bootstrap-datetimepicker.min.js" %}' type="text/javascript" ></script>
 <link rel="stylesheet" type="text/css" href='{% static "/assets/css/graph.min.css" %}' />
 <link rel="stylesheet" type="text/css" href='{% static "/assets/css/serial_analyis.min.css" %}' />
+<!-- <link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap.min.css.map" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap-theme.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap-theme.min.css.map" %}' /> -->
 <link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap-datetimepicker.min.css" %}' />
 
 {% endblock %}
@@ -60,6 +64,14 @@
                 <dd><input type="checkbox" id ="linear_regression"></dd>
               </dl>
             </div>
+
+            <div class="col md-3">
+              <dl class="form">
+                <dt class="field-label"><label for="userName">Interactive graph</label></dt>
+                <dd><input type="checkbox" id ="interactiveGraph"></dd>
+              </dl>
+            </div>
+
           </div>
 
           <div class="graph-container">

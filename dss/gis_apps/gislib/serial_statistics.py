@@ -21,6 +21,7 @@ def str2datetime(strlist,formatdatetime="%Y-%m-%d %H:%M:%S"):
     result = [datetime.strptime(e,formatdatetime) for e in strlist]
     return result
 
+
 def graph_in_endcode64(DF,variable="",unit="", title = "", linear_regression = False):
     DateTime = pandas.to_datetime(DF.index.values)
     data = np.array(DF.values)
@@ -398,10 +399,7 @@ class calibration_validation():
         fittedvalues =  np.array(fitted.fittedvalues)
         residual = fittedvalues - np.array(dropnan_DF.ob_value)
         norm_residual = fitted.resid_pearson
-
         ###
-
-
         figure = plt.figure(facecolor='white')
 
         subplot1 = figure.add_subplot(2,2,1)
