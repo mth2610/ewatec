@@ -2,6 +2,8 @@
  
 NAME="dss"                                  # Name of the application
 DJANGODIR=$(pwd)/dss             # Django project directory
+ENVDIR=$(pwd)/env		 # Virtual enviroment directory
+echo $ENVDIR
 SOCKFILE=$(pwd)/run/gunicorn.sock  # we will communicte using this unix socket
 NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
 DJANGO_SETTINGS_MODULE=dss.gunicorn_settings             # which settings file should Django use
@@ -12,17 +14,16 @@ echo "Starting $NAME as `whoami`"
 # Activate the virtual environment
 cd $DJANGODIR
 cd ..
-source env/bin/activate
+source $ENVDIR/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
-export PYTHONPATH=$DJANGODIR:$PYTHONPATH
- 
+export PYTHONPATH=$DJANGODIR:$ENVDIR
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
  
 # Start your Django Unicorn
 # Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
-exec env/bin/gunicorn ${DJANGO_WSGI_MODULE}:application\
+exec $ENVDIR/bin/gunicorn ${DJANGO_WSGI_MODULE}:application\
   --bind=unix:$SOCKFILE\ 
   --timeout 3600\
   --workers $NUM_WORKERS\
