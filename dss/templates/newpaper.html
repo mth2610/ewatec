@@ -1,14 +1,14 @@
 {% extends "base.html" %} 
-{% load static %} 
+{% load static %}
 {% block content %}
 
 <body>
 <section class="blog-wrapper">
     <div class="container">
-     
+
       <div class="row">
         <div class="col md-12">
-         
+
           <h1>Post Writing</h1>
           <div class="blog">
            <form action=create method="post" enctype="multipart/form-data">{% csrf_token %}
@@ -45,7 +45,7 @@
 {% endblock %}
 
 {% block additional_script %}
- 
+
  <script src='http://ajax.googleapis.com/ajax/libs/dojo/1.8.1/dojo/dojo.js' type=" text/javascript"></script>
   <link rel="stylesheet" type="text/css" href='{% static "/assets/css/editor.css" %}' />
   <script src='{% static "/assets/js/editor.js" %}' type=" text/javascript"></script>

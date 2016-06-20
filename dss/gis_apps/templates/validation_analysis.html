@@ -1,27 +1,27 @@
 <div class="row">
     <p>Test</p>
-    
+
     {% if timeseries_img %}
-    <div class="col md-12"> 
+    <div class="col md-12">
     <img src="data:image/png;base64, {{timeseries_img}} " />
 
     </div>
     {% endif %}
-    
+
     {% if scatter_img %}
-    <div class="col md-12"> 
+    <div class="col md-12">
         <img src="data:image/png;base64, {{scatter_img}} " />
     </div>
     {% endif %}
-    
+
     {% if residual_img %}
-    <div class="col md-12"> 
+    <div class="col md-12">
         <img src="data:image/png;base64, {{residual_img}} " />
     </div>
     {% endif %}
 </div>
-  
-<div class="row"> 
+
+<div class="row">
     <div class="col md-12">
         <div>
             <table class="striped">
@@ -64,32 +64,32 @@
                         <td>{{max_sm}}</td>
                         <td>{{max_ob}}</td>
                     </tr>
-                    
+
                     <tr>
                         <td>pearson_r</td>
                         <td>{{pearson_r}}</td>
                     </tr>
-                    
+
                     <tr>
                         <td>pearson_p</td>
                         <td>{{pearson_p}}</td>
                     </tr>
-                    
+
                     <tr>
                         <td>spearman_r</td>
                         <td>{{spearman_r}}</td>
                     </tr>
-                    
+
                     <tr>
                         <td>spearman_p</td>
                         <td>{{spearman_p}}</td>
                     </tr>
-                                        
+
                     <tr>
                         <td>nash</td>
                         <td>{{nash}}</td>
                     </tr>
-                    
+
                 </tbody>
             </table>
         </div>

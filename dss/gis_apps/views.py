@@ -315,7 +315,7 @@ def data_download(request):
 #         Do something for anonymous users.
 #        return render_to_response('permission_error.html')
 #        return HttpResponseRedirect("/auth/permission_error")
-
+@login_required(login_url="/auth/require_login")
 @csrf_exempt
 def show_graph(request):
     selected_id = request.POST.get('id')
@@ -334,7 +334,6 @@ def show_graph(request):
     dbConnection = connection
     dbCursor = dbConnection.cursor()
     variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
-
     data = ODM.getDataValue(dbConnection,int(selected_id),
                             variableLib[selected_variable.rstrip().replace('-',' ')],
                             selected_starttime,selected_endtime,
@@ -390,9 +389,8 @@ def show_graph(request):
     args['endtime'] = selected_endtime
     args['img'] = img
     args['timestep'] = "raw"
-
-    ##return render_to_response('blank_statistic.html',RequestContext(request,args))
-    return render(request,'blank_statistic.html',args, content_type='application/xhtml+xml')
+    return render_to_response('data-statistic.html',RequestContext(request,args))
+    ##return render(request,'blank_statistic.html',args, content_type='application/xhtml+xml')
 
 @csrf_exempt
 @login_required(login_url="/auth/require_login")
@@ -571,6 +569,7 @@ def histogram_statistics(request):
 @login_required(login_url="/auth/require_login")
 def averagemonthly_statistics(request):
     selected_id = request.POST.get('id')
+    print selected_id
     selected_variable = request.POST.get('variable')
     selected_starttime = request.POST.get('starttime')
     selected_endtime = request.POST.get('endtime')
@@ -597,7 +596,6 @@ def averagemonthly_statistics(request):
     dbConnection = connection
     dbCursor = dbConnection.cursor()
     variableLib = ODM.createLookupTable(dbCursor,'dbo."Variables"','VariableName','VariableID')
-
     data = ODM.getDataValue(dbConnection,int(selected_id),
                             variableLib[selected_variable.rstrip().replace('-',' ')],
                             selected_starttime,selected_endtime,

@@ -655,14 +655,17 @@ $("#zoom2layer").click(function () {
           'removeoutlier': removeoutlier,
         },
         success: function (data) {
-            var bd = newwindow.document.body;
-            var initial = newwindow.document.getElementById("initial_data_content");
-            $(initial).append(data);
-            newwindow.document.getElementById("id").value = id;
-            newwindow.document.getElementById("variable").value = variable.replace(/-/g," ");
-            newwindow.document.getElementById("starttime").value = start_time;
-            newwindow.document.getElementById("endtime").value = end_time;
-            $(newwindow.document.getElementById("spinner")).hide();
+            // var bd = newwindow.document.body;
+            // var initial = newwindow.document.getElementById("initial_data_content");
+            // $(initial).append(data);
+            // newwindow.document.getElementById("id").value = id;
+            // newwindow.document.getElementById("variable").value = variable.replace(/-/g," ");
+            // newwindow.document.getElementById("starttime").value = start_time;
+            // newwindow.document.getElementById("endtime").value = end_time;
+            // $(newwindow.document.getElementById("spinner")).hide();
+            newwindow.document.open();
+            newwindow.document.write(data) ;
+            newwindow.document.close();
         },
         error: function () {
           alert('Failed in sending ajax request')

@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block additional_script %}
 <!--{% load static %}-->
-<script src='{% static "/assets/js/statistics.js" %}'></script>
-<script src='{% static "/assets/js/scripts.min.js" %}' type="text/javascript" ></script>
-<script src='{% static "/assets/js/moment.min.js" %}' type="text/javascript" ></script>
-<script src='{% static "/assets/js/bootstrap-datetimepicker.min.js" %}' type="text/javascript" ></script>
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/graph.min.css" %}' />
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/serial_analyis.min.css" %}' />
-<!-- <link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap.min.css" %}' />
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap.min.css.map" %}' />
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap-theme.min.css" %}' />
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap-theme.min.css.map" %}' /> -->
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/bootstrap-datetimepicker.min.css" %}' />
+<script src='{% static "js/statistics.js" %}'></script>
+<script src='{% static "js/scripts.min.js" %}' type="text/javascript" ></script>
+<script src='{% static "js/moment.min.js" %}' type="text/javascript" ></script>
+<script src='{% static "js/bootstrap-datetimepicker.min.js" %}' type="text/javascript" ></script>
+<link rel="stylesheet" type="text/css" href='{% static "css/graph.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "css/serial_analyis.min.css" %}' />
+<!-- <link rel="stylesheet" type="text/css" href='{% static "s/css/bootstrap.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "s/css/bootstrap.min.css.map" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "s/css/bootstrap-theme.min.css" %}' />
+<link rel="stylesheet" type="text/css" href='{% static "s/css/bootstrap-theme.min.css.map" %}' /> -->
+<link rel="stylesheet" type="text/css" href='{% static "css/bootstrap-datetimepicker.min.css" %}' />
 
 {% endblock %}
 {% block content %}
@@ -80,7 +80,51 @@
             <div class="graph view" id="initial_data">
             <ul class="statistic tab-head"><li data-target="initial_data" class="selected"><a href="#">Yearly</a></li></ul>
               <div class="statistic-content" id="initial_data_content">
-              <p>If you want to view more initial data, please click the button <button id="initial_statistic">Initial Data</button> </p>
+                  <p>If you want to view more initial data, please click the button <button id="initial_statistic">Initial Data</button> </p>
+                  <div class="row">
+                      <div class="col md-8"> <img src="data:image/png;base64, {{img}} " />
+                      </div>
+                      <div class="col md-4">
+                          <div>
+                              <table class="striped">
+                                  <thead>
+                                      <tr>
+                                          <td><b>Statistical Parameters</b>
+                                          </td>
+                                          <td><b>Values</b>
+                                          </td>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+
+                                      <tr>
+                                          <td>Standard deviation</td>
+                                          <td>{{standard_deviation}}</td>
+                                      </tr>
+                                      <tr>
+                                          <td>Coefficient of variation</td>
+                                          <td>{{cv}}</td>
+                                      </tr>
+                                      <tr>
+                                          <td>Mean</td>
+                                          <td>{{mean}}</td>
+                                      </tr>
+                                      <tr>
+                                          <td>Min</td>
+                                          <td>{{min}}</td>
+                                      </tr>
+                                      <tr>
+                                          <td>Max</td>
+                                          <td>{{max}}</td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                          <div>
+                              <span class="button primary" title="Download Selected Data" id="extract_data" timestep={{timestep}} variable="{{variable}}" starttime= "{{starttime}}" endtime="{{endtime}}">Extract Data</span>
+                          </div>
+                      </div>
+                  </div>
               </div>
             </div>
 

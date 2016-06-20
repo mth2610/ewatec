@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 <section class="hero-wrapper">
@@ -13,7 +13,7 @@
       </div>
     </div>
   </section>
-  
+
   <section>
     <div class="feature-wrapper">
       <div class="container">
@@ -53,25 +53,25 @@
       </div>
     </div>
   </section>
-  
+
   <section class="logo-wrapper">
     <div class="container">
       <div class="row logos">
         <h3 class="heading">The website is powered by </h3>
         <div class="col md-3 xs-6">
-          <div class="ltm"><a href ="https://www.djangoproject.com/"><img src="assets/images/logo-django.png" alt=""></a></div>
+          <div class="ltm"><a href ="https://www.djangoproject.com/"><img src='{% static "images/logo-django.png" %}' alt=""></a></div>
         </div>
         <div class="col md-3 xs-6">
-            <div class="ltm"><a href ="http://www.postgresql.org/"><img src="assets/images/logo-postgresql.png" alt=""></a></div>
+          <div class="ltm"><a href ="http://www.postgresql.org/"><img src='{% static "images/logo-postgresql.png" %}' alt=""></a></div>
         </div>
         <div class="col md-3 xs-6">
-            <div class="ltm"><a href ="http://openlayers.org/"><img src="assets/images/logo-openlayers.png" alt=""></a><div class="lop">Openlayers</div></div>
+          <div class="ltm"><a href ="http://openlayers.org/"><img src='{% static "images/logo-openlayers.png" %}' alt=""></a></div>
         </div>
         <div class="col md-3 xs-6">
-            <div class="ltm"><a href ="https://www.cuahsi.org/"><img src="assets/images/logo-cuahsi.png" alt=""></a></div></div>
-      </div>
+          <div class="ltm"><a href ="https://www.cuahsi.org/"><img src='{% static "images/logo-cuahsi.png" %}' alt=""></a></div>
+        </div>
     </div>
   </section>
-    
- 
+
+
 {% endblock %}

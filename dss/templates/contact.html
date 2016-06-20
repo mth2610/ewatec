@@ -1,21 +1,21 @@
- 
-  {% extends "base.html" %} 
+
+  {% extends "base.html" %}
       {% load static %}
     {% block additional_script %}
-<link rel="stylesheet" type="text/css" href='{% static "/assets/css/ol.css" %}' />
-<script src='{% static "/assets/js/ol.js" %}' type=" text/javascript"></script>
+<link rel="stylesheet" type="text/css" href='{% static "css/ol.css" %}' />
+<script src='{% static "js/ol.js" %}' type=" text/javascript"></script>
 <script>
     var view = new ol.View({
         center: ol.proj.transform([106.787281, 10.878854], 'EPSG:4326', 'EPSG:3857'),
         zoom: 15,
     });
 
-    
+
     var iconFeature = new ol.Feature({
       geometry: new ol.geom.Point(ol.proj.transform([106.787281, 10.878854], 'EPSG:4326', 'EPSG:3857')),
       name: 'Institute for Environment and Resources',
     });
-    
+
 
 
     var img = new ol.style.Circle({
@@ -28,17 +28,17 @@
         width: 1,
       }),
     });
-    
+
     var textStroke = new ol.style.Stroke({
       color: '#fff',
       width: 3
     });
-    
+
     var textFill = new ol.style.Fill({
       color: '#000',
       visible: true,
     });
-    
+
     var point_style = new ol.style.Style({
         image:img,
         text: new ol.style.Text({
@@ -50,7 +50,7 @@
           labelYOffset: '-1000px',
         }),
     });
-    
+
     var vectorSource = new ol.source.Vector({
       features: [iconFeature]
     });
@@ -59,12 +59,12 @@
       source: vectorSource,
       style: [point_style]
     });
-    
+
     var basemap = new ol.layer.Tile({
             style: 'osm',
             source: new ol.source.OSM()
         });
-    
+
     var map = new ol.Map({
         controls: ol.control.defaults({
             attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
@@ -84,7 +84,7 @@
         <div class="col md-12">
           <div class="row blog">
             <div class="col md-6">
-              
+
               <div class="con address">
                 <h3>Department of Environmental Infomatics</h3>
                 <p>Institute of Environment and Resources, Vietnam National University of Ho Chi Minh city. (IER)</p>
@@ -131,9 +131,9 @@
                         <dt class="field-label"><font color="red">Sorry, that's not a valid form</font></dt>
                     </dl>
                 {% endif %}
-                    
+
                {% if messages %}
-                   {% for message in messages %} 
+                   {% for message in messages %}
                         <dl class="form">
                         <dt class="field-label"><label for="id_first_name">{{message}}</label></dt>
                        </dl>
@@ -147,6 +147,3 @@
     </div>
   </section>
 {% endblock %}
-
-
-

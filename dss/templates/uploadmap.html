@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %} 
-{% block content %}      
-           
+{% load static %}
+{% block content %}
+
 <section class="blog-wrapper">
     <div class="container">
         <div class="row">
@@ -9,7 +9,6 @@
                 <form action=confirm_upload_map method="post" enctype="multipart/form-data">{% csrf_token %}
                     <input type='hidden' name='csrfmiddlewaretoken' value='ZFCXFy6DUtKKHd0vF3cJCV7LOqGJf6wp' />
                     <h1>Import Map</h1>
-
                     <div class="blog blog-container">
                         <div class="blog-content">
                            <p>Choose your datavalues file to upload. Notice that your files have to be in shapefile format with at least four files (*.shp, *.shx, *.prj, *.dbf) compressed as a *.zip file and it should be in Geographic WGS84 or UTM WGS84 coordinate system. And please review <a href="/database/download_sample/sample_map.zip/">sample file.</a></p>
@@ -17,8 +16,6 @@
                             <div class="file-container">
                                 <p class="text-center"><input id="upload_file" name="upload_file" type="file" /></p>
                             </div>
-
-
                             <p class="text-center">
                                 <input type="submit" id="send-form" name="submit" value="Upload file" class="button primary fa fa-cloud-upload">
                             </p>
