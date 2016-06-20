@@ -9,7 +9,8 @@ export DJANGO_SETTINGS_MODULE=dss.gunicorn_settings             # which settings
 export DJANGO_WSGI_MODULE=dss.wsgi                     # WSGI module name
 
 echo "Starting $NAME as `ewatec`"
- 
+echo $(pwd)
+
 # Activate the virtual environment
 source $ENVDIR/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
