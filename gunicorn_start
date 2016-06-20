@@ -2,6 +2,7 @@
  
 NAME="dss"                                  # Name of the application
 DJANGODIR=$(pwd)/$NAME             # Django project directory
+echo $DJANGODIR
 ENVDIR=$(pwd)/env		 # Virtual enviroment directory
 SOCKFILE=$(pwd)/run/gunicorn.sock  # we will communicte using this unix socket
 NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
@@ -11,7 +12,6 @@ DJANGO_WSGI_MODULE=dss.wsgi                     # WSGI module name
 echo "Starting $NAME as `whoami`"
  
 # Activate the virtual environment
-cd $DJANGODIR
 source $ENVDIR/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$ENVDIR
